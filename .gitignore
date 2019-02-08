@@ -1,0 +1,57 @@
+# =============== #
+# Unity generated # 
+# =============== #
+ 
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uilds/
+[R]romFile/
+Assets/AssetStoreTools*
+Logs/
+InitTestScene*.unity*
+
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+ 
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.opendb
+
+# ======================================== #
+# Unity3D Generated File On Crash Reports  #  
+# ======================================== #
+
+sysinfo.txt
+UserPrefs.xml
+
+# ============ #
+# Builds       #
+# ============ #
+
+*.apk
+*.unitypackage
+
+# ============================ #
+# Unity3D generated meta files #
+# ============================ #
+
+*.pidb.meta
+*.pdb.meta
+
+# ================== #
+# Unity Test results #
+# ================== #
+EditorTestResults.xml
