@@ -66,19 +66,16 @@ namespace Domain.Player
         /// <param name="id">Identifier.</param>
         /// <param name="name">Name.</param>
         /// <param name="createAt">Create at.</param>
-        /// <param name="updateAt">Update at.</param>
-        /// using static が使用できるため、ファクトリメソッド名をクラス名にしておくことで new 演算子を省略したコンストラクタ呼び出しのように使える
-        public static IPlayer Player
+        public static IPlayer Create
         (
             PlayerId id,
             PlayerName name,
-            PlayerCreateAt createAt,
-            PlayerUpdateAt updateAt
+            PlayerCreateAt createAt
         ) => new PlayerImpl(
             id,
             name,
             createAt,
-            updateAt
+            (PlayerUpdateAt)createAt
         );
 
         /// <summary>
@@ -156,7 +153,7 @@ namespace Domain.Player
             public IPlayer Copy(
                 PlayerName name = default,
                 PlayerUpdateAt updateAt = default
-            ) => Player(
+            ) => new PlayerImpl(
                 Id, 
                 name.Equals(default) ? Name : name,
                 CreateAt,

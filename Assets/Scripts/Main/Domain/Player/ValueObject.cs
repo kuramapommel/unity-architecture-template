@@ -93,6 +93,35 @@ namespace Domain.Player
         /// </summary>
         /// <param name="value">Value.</param>
         public PlayerCreateAt(DateTime value) => Value = value;
+
+        /// <summary>
+        /// 等価比較
+        /// </summary>
+        /// <param name="obj">比較対象のオブジェクト</param>
+        /// <returns>同じIDならtrue</returns>
+        public override bool Equals(object obj) => obj is IValueObject<DateTime> && Value == ((IValueObject<DateTime>)obj).Value;
+
+        /// <summary>
+        /// hash取得
+        /// </summary>
+        /// <returns>hash</returns>
+        public override int GetHashCode() => EqualityComparer<DateTime>.Default.GetHashCode(Value);
+
+        /// <summary>
+        /// 等価比較
+        /// </summary>
+        /// <param name="self">The first <see cref="Domain.Player.PlayerCreateAt"/> to compare.</param>
+        /// <param name="that">The second <see cref="object"/> to compare.</param>
+        /// <returns><c>true</c> if <c>self</c> and <c>that</c> are equal; otherwise, <c>false</c>.</returns>
+        public static bool operator ==(PlayerCreateAt self, object that) => self.Equals(that);
+
+        /// <summary>
+        /// 非等価比較
+        /// </summary>
+        /// <param name="self">The first <see cref="Domain.Player.PlayerCreateAt"/> to compare.</param>
+        /// <param name="that">The second <see cref="object"/> to compare.</param>
+        /// <returns><c>true</c> if <c>self</c> and <c>that</c> are not equal; otherwise, <c>false</c>.</returns>
+        public static bool operator !=(PlayerCreateAt self, object that) => !(self == that);
     }
 
     /// <summary>
@@ -111,5 +140,41 @@ namespace Domain.Player
         /// </summary>
         /// <param name="value">Value.</param>
         public PlayerUpdateAt(DateTime value) => Value = value;
+
+        /// <summary>
+        /// 等価比較
+        /// </summary>
+        /// <param name="obj">比較対象のオブジェクト</param>
+        /// <returns>同じIDならtrue</returns>
+        public override bool Equals(object obj) => obj is IValueObject<DateTime> && Value == ((IValueObject<DateTime>)obj).Value;
+
+        /// <summary>
+        /// hash取得
+        /// </summary>
+        /// <returns>hash</returns>
+        public override int GetHashCode() => EqualityComparer<DateTime>.Default.GetHashCode(Value);
+
+        /// <summary>
+        /// PlayerCreateAtをPlayerUpdateAtに変換する暗黙の型変換
+        /// </summary>
+        /// <returns>The implicit.</returns>
+        /// <param name="createAt">Create at.</param>
+        public static implicit operator PlayerUpdateAt(PlayerCreateAt createAt) => new PlayerUpdateAt(createAt.Value);
+
+        /// <summary>
+        /// 等価比較
+        /// </summary>
+        /// <param name="self">The first <see cref="Domain.Player.PlayerUpdateAt"/> to compare.</param>
+        /// <param name="that">The second <see cref="object"/> to compare.</param>
+        /// <returns><c>true</c> if <c>self</c> and <c>that</c> are equal; otherwise, <c>false</c>.</returns>
+        public static bool operator ==(PlayerUpdateAt self, object that) => self.Equals(that);
+
+        /// <summary>
+        /// 非等価比較
+        /// </summary>
+        /// <param name="self">The first <see cref="Domain.Player.PlayerUpdateAt"/> to compare.</param>
+        /// <param name="that">The second <see cref="object"/> to compare.</param>
+        /// <returns><c>true</c> if <c>self</c> and <c>that</c> are not equal; otherwise, <c>false</c>.</returns>
+        public static bool operator !=(PlayerUpdateAt self, object that) => !(self == that);
     }
 }
