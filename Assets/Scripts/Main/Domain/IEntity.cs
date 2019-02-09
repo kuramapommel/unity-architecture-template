@@ -11,6 +11,7 @@ namespace Domain
         /// 一意性を表す識別子
         /// </summary>
         /// <value>The identifier.</value>
+        /// Entity は必ず一意であることを証明するための識別子を持つ
         EntityId Id { get; }
     }
 
