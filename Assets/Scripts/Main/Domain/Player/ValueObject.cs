@@ -77,17 +77,39 @@ namespace Domain.Player
         public PlayerName(string value) => Value = value;
     }
 
+    /// <summary>
+    /// プレイヤー作成日時
+    /// </summary>
     public readonly struct PlayerCreateAt : IValueObject<DateTime>
     {
+        /// <summary>
+        /// プレイヤー作成日時の値
+        /// </summary>
+        /// <value>The value.</value>
         public DateTime Value { get; }
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="value">Value.</param>
         public PlayerCreateAt(DateTime value) => Value = value;
     }
 
+    /// <summary>
+    /// プレイヤー更新日時
+    /// </summary>
     public readonly struct PlayerUpdateAt : IValueObject<DateTime>
     {
+        /// <summary>
+        /// プレイヤー更新日時の値
+        /// </summary>
+        /// <value>The value.</value>
         public DateTime Value { get; }
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="value">Value.</param>
         public PlayerUpdateAt(DateTime value) => Value = value;
     }
 }
