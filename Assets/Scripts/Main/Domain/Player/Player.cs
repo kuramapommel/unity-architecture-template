@@ -42,16 +42,11 @@ namespace Domain.Player
         PlayerUpdateAt UpdateAt { get; }
 
         /// <summary>
-        /// コピー
+        /// 名前変更
         /// </summary>
-        /// <returns>The copy.</returns>
+        /// <returns>The rename.</returns>
         /// <param name="name">Name.</param>
-        /// <param name="updateAt">UpdateAt.</param>
-        /// コピーメソッドを用意しておくことで、
-        /// 更新後のインスタンスを作り直して return する場合などのファクトリとして使える
-        /// コピーメソッドで重要なのは、 Id や CreateAt の様に恒久な値は引数で受けないようにしておくこと
-        /// 業務的に変更されることがあるプロパティのみを引数で受けるようにすることで同じエンティティ（ copy ）であることを保証する
-        IPlayer Copy(PlayerName name = default, PlayerUpdateAt updateAt = default);
+        IPlayer Rename(PlayerName name);
     }
 
     /// <summary>
@@ -142,23 +137,15 @@ namespace Domain.Player
             /// </summary>
             /// <returns>The copy.</returns>
             /// <param name="name">Name.</param>
-            /// <param name="updateAt">Update at.</param>
-            /// デフォルト引数を使用することで
-            /// ex.
-            /// var copiedPlayer = player.Copy(name: "updated name");
-            /// の様に更新が必要な部分だけ名前付き引数で更新させることができる
-            /// デフォルト引数はコンパイル時定数を使用しないといけないため
-            /// 冗長ではあるが一度 default と比較するようにしている
-            /// 将来的に C# のバージョンが上がってコンパイル時定数以外も初期値としてセットできるようになれば
-            /// default との比較は不要になる
-            public IPlayer Copy(
-                PlayerName name = default,
-                PlayerUpdateAt updateAt = default
-            ) => new PlayerImpl(
-                Id, 
-                name.Equals(default) ? Name : name,
+            /// 状態の変化は新しいオブジェクトを生成することで immutable に実現する
+            /// 振る舞いは関連する一連の処理（トランザクション整合性を担保する処理）を一つのふるまいとして記述する
+            /// ここでは名前を変更することによって、プレイヤー更新日時も変わるため合わせて更新し、
+            /// 識別子など変わらない部分はそのままプロパティの値を注入する
+            public IPlayer Rename(PlayerName name) => new PlayerImpl(
+                Id,
+                name,
                 CreateAt,
-                updateAt.Equals(default) && !name.Equals(default) ? new PlayerUpdateAt(DateTime.Now) : updateAt
+                new PlayerUpdateAt(DateTime.Now)
             );
 
             /// <summary>

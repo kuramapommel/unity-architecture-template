@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Domain.Player
@@ -80,7 +81,7 @@ namespace Domain.Player
     /// <summary>
     /// プレイヤー作成日時
     /// </summary>
-    public readonly struct PlayerCreateAt : IValueObject<DateTime>
+    public readonly struct PlayerCreateAt : IValueObject<DateTime>, IComparable, IComparable<DateTime>
     {
         /// <summary>
         /// プレイヤー作成日時の値
@@ -99,13 +100,27 @@ namespace Domain.Player
         /// </summary>
         /// <param name="obj">比較対象のオブジェクト</param>
         /// <returns>同じIDならtrue</returns>
-        public override bool Equals(object obj) => obj is IValueObject<DateTime> && Value == ((IValueObject<DateTime>)obj).Value;
+        public override bool Equals(object obj) => obj is IValueObject<DateTime> && Value.Equals(((IValueObject<DateTime>)obj).Value);
 
         /// <summary>
         /// hash取得
         /// </summary>
         /// <returns>hash</returns>
         public override int GetHashCode() => EqualityComparer<DateTime>.Default.GetHashCode(Value);
+
+        /// <summary>
+        /// 比較
+        /// </summary>
+        /// <returns>The to.</returns>
+        /// <param name="that">That.</param>
+        public int CompareTo(DateTime that) => Value.CompareTo(that);
+
+        /// <summary>
+        /// 比較
+        /// </summary>
+        /// <returns>The to.</returns>
+        /// <param name="that">That.</param>
+        public int CompareTo(object that) => this.Compare(that);
 
         /// <summary>
         /// 等価比較
@@ -127,7 +142,7 @@ namespace Domain.Player
     /// <summary>
     /// プレイヤー更新日時
     /// </summary>
-    public readonly struct PlayerUpdateAt : IValueObject<DateTime>
+    public readonly struct PlayerUpdateAt : IValueObject<DateTime>, IComparable, IComparable<DateTime>
     {
         /// <summary>
         /// プレイヤー更新日時の値
@@ -146,13 +161,27 @@ namespace Domain.Player
         /// </summary>
         /// <param name="obj">比較対象のオブジェクト</param>
         /// <returns>同じIDならtrue</returns>
-        public override bool Equals(object obj) => obj is IValueObject<DateTime> && Value == ((IValueObject<DateTime>)obj).Value;
+        public override bool Equals(object obj) => obj is IValueObject<DateTime> && Value.Equals(((IValueObject<DateTime>)obj).Value);
 
         /// <summary>
         /// hash取得
         /// </summary>
         /// <returns>hash</returns>
         public override int GetHashCode() => EqualityComparer<DateTime>.Default.GetHashCode(Value);
+
+        /// <summary>
+        /// 比較
+        /// </summary>
+        /// <returns>The to.</returns>
+        /// <param name="that">That.</param>
+        public int CompareTo(DateTime that) => Value.CompareTo(that);
+
+        /// <summary>
+        /// 比較
+        /// </summary>
+        /// <returns>The to.</returns>
+        /// <param name="that">That.</param>
+        public int CompareTo(object that) => this.Compare(that);
 
         /// <summary>
         /// PlayerCreateAtをPlayerUpdateAtに変換する暗黙の型変換

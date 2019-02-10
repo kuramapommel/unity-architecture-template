@@ -23,21 +23,19 @@ namespace Test.Domain.Player
         }
 
         [Test]
-        public void PlayerのCopyは渡されたパラメータを元に同じentityのコピーを生成する()
+        public void PlayerはRenameによって名前を変更でき_その際更新日付も更新される()
         {
             var player = PlayerFactory.Create(id, name, createAt);
 
-            var updatedName = new PlayerName("updated name");
+            var renamedName = new PlayerName("updated name");
 
-            var copiedPlayer = player.Copy(name: updatedName);
+            var renamedPlayer = player.Rename(name: renamedName);
 
-            AreEqual(id, copiedPlayer.Id);
-            AreEqual(updatedName, copiedPlayer.Name);
-            AreEqual(createAt, copiedPlayer.CreateAt);
-            // Name が更新されているため update at も更新されている
-            AreNotEqual(createAt, copiedPlayer.UpdateAt);
-            // PlayerCreateAt, PlayerUpdateAt それぞれ IComparable, IComparable<DateTime> を実装し、Less比較する
-            // Less(createAt, copiedPlayer.UpdateAt);
+            AreEqual(id, renamedPlayer.Id);
+            AreEqual(renamedName, renamedPlayer.Name);
+            AreEqual(createAt, renamedPlayer.CreateAt);
+            // Name の変更に合わせて UpdateAt も更新されている
+            Less(createAt, renamedPlayer.UpdateAt);
         }
     }
 }
