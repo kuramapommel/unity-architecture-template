@@ -6,6 +6,7 @@
  */
 
 using System.Collections.Generic;
+using System;
 
 namespace Domain.Player
 {
@@ -50,7 +51,7 @@ namespace Domain.Player
         /// 更新後のインスタンスを作り直して return する場合などのファクトリとして使える
         /// コピーメソッドで重要なのは、 Id や CreateAt の様に恒久な値は引数で受けないようにしておくこと
         /// 業務的に変更されることがあるプロパティのみを引数で受けるようにすることで同じエンティティ（ copy ）であることを保証する
-        IPlayer Copy(PlayerName name, PlayerUpdateAt updateAt);
+        IPlayer Copy(PlayerName name = default, PlayerUpdateAt updateAt = default);
     }
 
     /// <summary>
@@ -157,7 +158,7 @@ namespace Domain.Player
                 Id, 
                 name.Equals(default) ? Name : name,
                 CreateAt,
-                updateAt.Equals(default) ? UpdateAt : updateAt
+                updateAt.Equals(default) && !name.Equals(default) ? new PlayerUpdateAt(DateTime.Now) : updateAt
             );
 
             /// <summary>
