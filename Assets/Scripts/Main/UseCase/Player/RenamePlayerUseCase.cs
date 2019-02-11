@@ -40,7 +40,6 @@ namespace UseCase.Player
         /// リネームユースケース実行
         /// </summary>
         /// <returns>リネーム後のプレイヤー</returns>
-        /// UniTask が使える環境であれば async メソッドにする
         public IApplicationResult<IPlayer> Execute()
         {
             var player = m_playerRepository.FindById(m_playerId);
