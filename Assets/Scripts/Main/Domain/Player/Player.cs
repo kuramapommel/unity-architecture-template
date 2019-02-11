@@ -5,8 +5,8 @@
  * namespace は境界づけられたコンテキスト名を使用する
  */
 
-using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace Domain.Player
 {
@@ -40,7 +40,7 @@ namespace Domain.Player
         /// </summary>
         /// <returns>The rename.</returns>
         /// <param name="name">Name.</param>
-        IPlayer Rename(PlayerName name);
+        DomainResult<IPlayer> Rename(PlayerName name);
     }
 
     /// <summary>
@@ -128,12 +128,11 @@ namespace Domain.Player
             /// 振る舞いは関連する一連の処理（トランザクション整合性を担保する処理）を一つのふるまいとして記述する
             /// ここでは名前を変更することによって、プレイヤー更新日時も変わるため合わせて更新し、
             /// 識別子など変わらない部分はそのままプロパティの値を注入する
-            public IPlayer Rename(PlayerName name) => new PlayerImpl(
+            public DomainResult<IPlayer> Rename(PlayerName name) => DomainResult<IPlayer>.Right(new PlayerImpl(
                 Id,
                 name,
                 CreateAt,
-                new PlayerUpdateAt(DateTime.Now)
-            );
+                new PlayerUpdateAt(DateTime.Now)));
 
             /// <summary>
             /// 等価比較

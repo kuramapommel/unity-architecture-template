@@ -10,7 +10,7 @@ namespace Test.Domain
         public void DomainResultはコンストラクタで注入したエラー情報を保持する()
         {
             var domainError = new DomainError();
-            var domainResult = new DomainResult<int>(1, domainError);
+            var domainResult = DomainResult<int>.Left(domainError);
 
             foreach (var error in domainResult.Errors)
             {
@@ -22,7 +22,7 @@ namespace Test.Domain
         public void DomainResultはコンストラクタで注入した成功情報を保持する()
         {
             var result = 0;
-            var domainResult = new DomainResult<int>(result, default);
+            var domainResult = DomainResult<int>.Right(result);
 
             AreEqual(result, domainResult.Result);
         }

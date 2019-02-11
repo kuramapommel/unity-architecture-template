@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using NUnit.Framework;
 using Domain.Player;
 using static NUnit.Framework.Assert;
@@ -26,8 +26,11 @@ namespace Test.Domain.Player
             var createAt = player.CreateAt;
 
             var renamedName = new PlayerName("updated name");
-            var renamedPlayer = player.Rename(name: renamedName);
+            var renamedPlayerResult = player.Rename(name: renamedName);
 
+            AreEqual(0, renamedPlayerResult.Errors.Count());
+
+            var renamedPlayer = renamedPlayerResult.Result;
             AreEqual(id, renamedPlayer.Id);
             AreEqual(renamedName, renamedPlayer.Name);
             AreEqual(createAt, renamedPlayer.CreateAt);

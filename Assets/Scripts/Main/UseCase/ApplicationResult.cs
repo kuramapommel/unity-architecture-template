@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UseCase
 {
@@ -7,6 +8,27 @@ namespace UseCase
     /// </summary>
     public readonly struct ApplicationResult<ResultType>
     {
+        /// <summary>
+        /// 成功時ファクトリ
+        /// </summary>
+        /// <returns>成功時実行結果</returns>
+        /// <param name="result">Result.</param>
+        public static ApplicationResult<ResultType> Right(ResultType result) => new ApplicationResult<ResultType>(result, Enumerable.Empty<ApplicationError>());
+
+        /// <summary>
+        /// 失敗時ファクトリ
+        /// </summary>
+        /// <returns>失敗時実行結果</returns>
+        /// <param name="errors">Errors.</param>
+        public static ApplicationResult<ResultType> Left(params ApplicationError[] errors) => new ApplicationResult<ResultType>(default, errors);
+
+        /// <summary>
+        /// 失敗時ファクトリ
+        /// </summary>
+        /// <returns>失敗時実行結果</returns>
+        /// <param name="errors">Errors.</param>
+        public static ApplicationResult<ResultType> Left(IEnumerable<ApplicationError> errors) => new ApplicationResult<ResultType>(default, errors);
+
         /// <summary>
         /// アプリケーション層で発生した例外
         /// </summary>
@@ -24,13 +46,13 @@ namespace UseCase
         /// </summary>
         /// <param name="result">Result.</param>
         /// <param name="errors">Errors.</param>
-        public ApplicationResult(ResultType result, params ApplicationError[] errors) => (Errors, Result) = (errors, result);
+        private ApplicationResult(ResultType result, params ApplicationError[] errors) => (Errors, Result) = (errors, result);
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="result">Result.</param>
         /// <param name="errors">Errors.</param>
-        public ApplicationResult(ResultType result, IEnumerable<ApplicationError> errors) => (Errors, Result) = (errors, result);
+        private ApplicationResult(ResultType result, IEnumerable<ApplicationError> errors) => (Errors, Result) = (errors, result);
     }
 }

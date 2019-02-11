@@ -45,11 +45,14 @@ namespace UseCase.Player
         {
             var player = m_playerRepository.FindById(m_playerId);
 
-            var renamedPlayer = player.Rename(m_renamedName);
+            var renamedPlayerResult = player.Rename(m_renamedName);
 
+            if (renamedPlayerResult.Errors.Any()) return ApplicationResult<IPlayer>.Left(renamedPlayerResult.Errors.Select(error => error.ToApplicationError()));
+            
+            var renamedPlayer = renamedPlayerResult.Result;
             var savedPlayer = m_playerRepository.Save(renamedPlayer);
 
-            return new ApplicationResult<IPlayer>(savedPlayer, Enumerable.Empty<ApplicationError>());
+            return ApplicationResult<IPlayer>.Right(savedPlayer);
         }
     }
 }
