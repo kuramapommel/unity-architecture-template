@@ -18,12 +18,6 @@ namespace Domain.Player
     public interface IPlayer : IEntity<PlayerId>
     {
         /// <summary>
-        /// プレイヤーID
-        /// </summary>
-        /// <value>The identifier.</value>
-        PlayerId Id { get; }
-
-        /// <summary>
         /// プレイヤー名
         /// </summary>
         /// <value>The name.</value>
@@ -61,18 +55,11 @@ namespace Domain.Player
         /// <returns>The player.</returns>
         /// <param name="id">Identifier.</param>
         /// <param name="name">Name.</param>
-        /// <param name="createAt">Create at.</param>
-        public static IPlayer Create
-        (
-            PlayerId id,
-            PlayerName name,
-            PlayerCreateAt createAt
-        ) => new PlayerImpl(
-            id,
-            name,
-            createAt,
-            (PlayerUpdateAt)createAt
-        );
+        public static IPlayer Create(PlayerId id, PlayerName name)
+        {
+            var createAt = new PlayerCreateAt(DateTime.Now);
+            return new PlayerImpl(id, name, createAt, createAt);
+        }
 
         /// <summary>
         /// プレイヤー Entity 実装
@@ -161,7 +148,7 @@ namespace Domain.Player
             /// hash取得
             /// </summary>
             /// <returns>hash</returns>
-            public override int GetHashCode() => EqualityComparer<PlayerId>.Default.GetHashCode(Id);
+            public override int GetHashCode() => Id.GetHashCode();
 
             /// <summary>
             /// 等価比較
