@@ -74,8 +74,8 @@ namespace Domain
             /// <summary>
             /// コンストラクタ
             /// </summary>
-            /// <param name="resutl">Resutl.</param>
-            public SuccessImpl(ResultType resutl) => Result = resutl;
+            /// <param name="result">Result.</param>
+            public SuccessImpl(ResultType result) => Result = result;
         }
 
         /// <summary>
