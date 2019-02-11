@@ -1,3 +1,4 @@
+using System.Linq;
 using NUnit.Framework;
 using Domain.Player;
 using UseCase.Player;
@@ -23,12 +24,28 @@ namespace Test.UseCase.Player
                 renamedName
                 );
 
-            var success = renamePlayerUseCase.Execute();
-            foreach (var savedPlayer in success)
+            var result = renamePlayerUseCase.Execute();
+            // IEnumerable による値取得のテスト
+            foreach (var savedPlayer in result)
             {
                 AreEqual(playerMock, savedPlayer); // player id が変わっていないことのテスト
                 AreNotEqual(playerName, savedPlayer.Name); // 名前が変わっていることのテスト
                 AreEqual(renamedName, savedPlayer.Name); // 名前が renamedName に変わっていることのテスト
+            }
+
+            // type switch による値取得のテスト
+            switch (result)
+            {
+                case Success<IPlayer> success:
+                    var savedPlayer = success.Result;
+                    AreEqual(playerMock, savedPlayer); // player id が変わっていないことのテスト
+                    AreNotEqual(playerName, savedPlayer.Name); // 名前が変わっていることのテスト
+                    AreEqual(renamedName, savedPlayer.Name); // 名前が renamedName に変わっていることのテスト
+                    return;
+
+                default:
+                    Fail();
+                    return;
             }
         }
 
