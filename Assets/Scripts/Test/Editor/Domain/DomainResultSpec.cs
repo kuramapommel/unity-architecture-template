@@ -10,9 +10,9 @@ namespace Test.Domain
         public void DomainResultはコンストラクタで注入したエラー情報を保持する()
         {
             var domainError = new DomainError();
-            var domainResult = DomainResult.Failure(domainError);
+            var domainResult = DomainResult.Failure<int>(domainError);
 
-            foreach (var error in ((Failure)domainResult).Errors)
+            foreach (var error in ((Failure<int>)domainResult).Errors)
             {
                 AreEqual(domainError, error);
             }
@@ -21,10 +21,13 @@ namespace Test.Domain
         [Test]
         public void DomainResultはコンストラクタで注入した成功情報を保持する()
         {
-            var result = 0;
-            var domainResult = DomainResult.Success(result);
+            var expect = 0;
+            var success = DomainResult.Success(expect);
 
-            AreEqual(result, ((Success<int>)domainResult).Result);
+            foreach (var result in success)
+            {
+                AreEqual(expect, result);
+            }
         }
     }
 }

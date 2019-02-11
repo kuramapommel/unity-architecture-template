@@ -6,7 +6,6 @@
  */
 
 using System;
-using System.Linq;
 
 namespace Domain.Player
 {
@@ -40,7 +39,7 @@ namespace Domain.Player
         /// </summary>
         /// <returns>The rename.</returns>
         /// <param name="name">Name.</param>
-        IDomainResult Rename(PlayerName name);
+        IDomainResult<IPlayer> Rename(PlayerName name);
     }
 
     /// <summary>
@@ -128,7 +127,7 @@ namespace Domain.Player
             /// 振る舞いは関連する一連の処理（トランザクション整合性を担保する処理）を一つのふるまいとして記述する
             /// ここでは名前を変更することによって、プレイヤー更新日時も変わるため合わせて更新し、
             /// 識別子など変わらない部分はそのままプロパティの値を注入する
-            public IDomainResult Rename(PlayerName name) => DomainResult.Success<IPlayer>(new PlayerImpl(
+            public IDomainResult<IPlayer> Rename(PlayerName name) => DomainResult.Success<IPlayer>(new PlayerImpl(
                 Id,
                 name,
                 CreateAt,

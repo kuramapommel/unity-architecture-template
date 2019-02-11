@@ -1,5 +1,4 @@
 using Domain.Player;
-using Domain;
 using System.Linq;
 
 namespace UseCase.Player
@@ -42,7 +41,7 @@ namespace UseCase.Player
         /// </summary>
         /// <returns>リネーム後のプレイヤー</returns>
         /// UniTask が使える環境であれば async メソッドにする
-        public ApplicationResult<IPlayer> Execute()
+        public IApplicationResult<IPlayer> Execute()
         {
             var player = m_playerRepository.FindById(m_playerId);
 
@@ -51,17 +50,17 @@ namespace UseCase.Player
             // type switch を使ってパターンマッチで failure/success を実装する
             switch (renamedPlayerResult)
             {
-                case Failure failure:
-                    return ApplicationResult<IPlayer>.Left(failure.Errors.Select(error => error.ToApplicationError()));
+                case Domain.Failure<IPlayer> failure:
+                    return ApplicationResult.Failure<IPlayer>(failure.Errors.Select(error => error.ToApplicationError()));
 
-                case Success<IPlayer> success:
+                case Domain.Success<IPlayer> success:
                     var renamedPlayer = success.Result;
                     var savedPlayer = m_playerRepository.Save(renamedPlayer);
-                    return ApplicationResult<IPlayer>.Right(savedPlayer);
+                    return ApplicationResult.Success(savedPlayer);
             }
 
             // TODO 想定外の例外であることを詰めて返す
-            return ApplicationResult<IPlayer>.Left();
+            return ApplicationResult.Failure<IPlayer>();
         }
     }
 }

@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using Domain.Player;
 using UseCase.Player;
-using System.Linq;
+using UseCase;
 using static NUnit.Framework.Assert;
 
 namespace Test.UseCase.Player
@@ -23,14 +23,13 @@ namespace Test.UseCase.Player
                 renamedName
                 );
 
-            var savedPlayerResult = renamePlayerUseCase.Execute();
-
-            AreEqual(0, savedPlayerResult.Errors.Count()); // error がないことのテスト
-
-            var savedPlayer = savedPlayerResult.Result;
-            AreEqual(playerMock, savedPlayer); // player id が変わっていないことのテスト
-            AreNotEqual(playerName, savedPlayer.Name); // 名前が変わっていることのテスト
-            AreEqual(renamedName, savedPlayer.Name); // 名前が renamedName に変わっていることのテスト
+            var success = renamePlayerUseCase.Execute();
+            foreach (var savedPlayer in success)
+            {
+                AreEqual(playerMock, savedPlayer); // player id が変わっていないことのテスト
+                AreNotEqual(playerName, savedPlayer.Name); // 名前が変わっていることのテスト
+                AreEqual(renamedName, savedPlayer.Name); // 名前が renamedName に変わっていることのテスト
+            }
         }
 
         private sealed class PlayerRepositoryMock : IPlayerRepository

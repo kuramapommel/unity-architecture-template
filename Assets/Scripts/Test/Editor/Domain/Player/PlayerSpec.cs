@@ -1,4 +1,3 @@
-using System.Linq;
 using NUnit.Framework;
 using Domain.Player;
 using Domain;
@@ -27,10 +26,7 @@ namespace Test.Domain.Player
             var createAt = player.CreateAt;
 
             var renamedName = new PlayerName("updated name");
-            var result = player.Rename(name: renamedName);
-
-            UnityEngine.Debug.Log(result.GetType());
-            var success = result as Success<IPlayer>;
+            var success = player.Rename(name: renamedName) as Success<IPlayer>;
 
             var renamedPlayer = success.Result;
             AreEqual(id, renamedPlayer.Id);

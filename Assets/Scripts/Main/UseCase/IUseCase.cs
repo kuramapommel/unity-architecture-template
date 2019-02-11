@@ -9,6 +9,6 @@ namespace UseCase
         /// ユースケースを実行する
         /// </summary>
         /// <returns>実行結果</returns>
-        ApplicationResult<ResultType> Execute();
+        IApplicationResult<ResultType> Execute();
     }
 }
