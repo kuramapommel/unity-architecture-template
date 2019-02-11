@@ -1,4 +1,5 @@
 using Domain.Player;
+using Domain;
 using System.Linq;
 
 namespace UseCase.Player
@@ -47,12 +48,20 @@ namespace UseCase.Player
 
             var renamedPlayerResult = player.Rename(m_renamedName);
 
-            if (renamedPlayerResult.Errors.Any()) return ApplicationResult<IPlayer>.Left(renamedPlayerResult.Errors.Select(error => error.ToApplicationError()));
-            
-            var renamedPlayer = renamedPlayerResult.Result;
-            var savedPlayer = m_playerRepository.Save(renamedPlayer);
+            // type switch を使ってパターンマッチで failure/success を実装する
+            switch (renamedPlayerResult)
+            {
+                case Failure failure:
+                    return ApplicationResult<IPlayer>.Left(failure.Errors.Select(error => error.ToApplicationError()));
 
-            return ApplicationResult<IPlayer>.Right(savedPlayer);
+                case Success<IPlayer> success:
+                    var renamedPlayer = success.Result;
+                    var savedPlayer = m_playerRepository.Save(renamedPlayer);
+                    return ApplicationResult<IPlayer>.Right(savedPlayer);
+            }
+
+            // TODO 想定外の例外であることを詰めて返す
+            return ApplicationResult<IPlayer>.Left();
         }
     }
 }

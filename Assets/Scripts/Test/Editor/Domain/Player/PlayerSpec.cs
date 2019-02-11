@@ -1,6 +1,7 @@
 using System.Linq;
 using NUnit.Framework;
 using Domain.Player;
+using Domain;
 using static NUnit.Framework.Assert;
 
 namespace Test.Domain.Player
@@ -26,11 +27,12 @@ namespace Test.Domain.Player
             var createAt = player.CreateAt;
 
             var renamedName = new PlayerName("updated name");
-            var renamedPlayerResult = player.Rename(name: renamedName);
+            var result = player.Rename(name: renamedName);
 
-            AreEqual(0, renamedPlayerResult.Errors.Count());
+            UnityEngine.Debug.Log(result.GetType());
+            var success = result as Success<IPlayer>;
 
-            var renamedPlayer = renamedPlayerResult.Result;
+            var renamedPlayer = success.Result;
             AreEqual(id, renamedPlayer.Id);
             AreEqual(renamedName, renamedPlayer.Name);
             AreEqual(createAt, renamedPlayer.CreateAt);
