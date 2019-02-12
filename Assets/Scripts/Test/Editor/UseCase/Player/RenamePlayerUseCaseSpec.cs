@@ -12,18 +12,18 @@ namespace Test.UseCase.Player
         public void プレイヤーの名前を変更し保存することができる()
         {
             #region 下ごしらえ
-            var intPlayerId = 1;
-            var playerId = new PlayerId(intPlayerId);
+            var longPlayerId = 1L;
+            var playerId = new PlayerId(longPlayerId);
             var playerName = new PlayerName("name");
             var playerMock = PlayerFactory.Create(playerId, playerName);
             var playerRepositoryMock = new PlayerRepositoryMock(playerMock);
             #endregion
 
             // protocol を定義
-            var protocol = RenamePlayerProtocol.Create(intPlayerId, "renamed name");
+            var protocol = RenamePlayerProtocol.Create(longPlayerId, "renamed name");
             var renamePlayerUseCase = new RenamePlayerUseCase(playerRepositoryMock);
 
-            var renamedName = protocol.ToDomainType().renamedNmae;
+            var renamedName = protocol.ToUseCaseProtocol().renamedNmae;
             var result = renamePlayerUseCase.Execute(protocol);
 
             // IEnumerable による値取得のテスト

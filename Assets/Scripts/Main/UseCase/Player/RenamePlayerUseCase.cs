@@ -6,7 +6,7 @@ namespace UseCase.Player
     /// <summary>
     /// プレイヤーリネームユースケース
     /// </summary>
-    public sealed class RenamePlayerUseCase : IUseCase<IPlayer, IRenamePlayerProtocol, (PlayerId, PlayerName)>
+    public sealed class RenamePlayerUseCase : IUseCase<IPlayer, (PlayerId playerId, PlayerName renamedNmae)>
     {
         /// <summary>
         /// プレイヤーリポジトリ
@@ -27,9 +27,9 @@ namespace UseCase.Player
         /// </summary>
         /// <returns>リネーム後のプレイヤー</returns>
         /// <param name="protocol">Protocol.</param>
-        public IApplicationResult<IPlayer> Execute(IRenamePlayerProtocol protocol)
+        public IApplicationResult<IPlayer> Execute(IUseCaseProtocol<(PlayerId playerId, PlayerName renamedNmae)> protocol)
         {
-            var (playerId, renamedName) = protocol.ToDomainType();
+            var (playerId, renamedName) = protocol.ToUseCaseProtocol();
 
             var player = m_playerRepository.FindById(playerId);
 
@@ -52,26 +52,52 @@ namespace UseCase.Player
         }
     }
 
-    public interface IRenamePlayerProtocol : IUseCaseProtocol<(PlayerId playerId, PlayerName renamedNmae)>
-    {
-        int PlayerId { get; }
-
-        string RenamedName { get; }
-    }
-
+    /// <summary>
+    /// リネームユースケースで使用するプロトコル定義
+    /// </summary>
+    /// ユースケースとプロトコルを合わせて定義することで
+    /// そのユースケースを実行するのに必要な情報を同ファイル内に閉じ込める
     public static class RenamePlayerProtocol
     {
-        public static IRenamePlayerProtocol Create(int playerId, string renamedName) => new RenamePlayerProtocolImpl(playerId, renamedName);
+        /// <summary>
+        /// プロトコルファクトリ
+        /// </summary>
+        /// <returns>The create.</returns>
+        /// <param name="playerId">Player identifier.</param>
+        /// <param name="renamedName">Renamed name.</param>
+        public static IUseCaseProtocol<(PlayerId playerId, PlayerName renamedNmae)> Create(long playerId, string renamedName) => new RenamePlayerProtocolImpl(playerId, renamedName);
 
-        private readonly struct RenamePlayerProtocolImpl : IRenamePlayerProtocol
+        /// <summary>
+        /// リネームユースケースプロトコル具象実装
+        /// </summary>
+        /// 簡略化のためにユースケースプロトコルをタプルで記載しているが
+        /// 要素が多いようであればこちらも型定義する
+        private readonly struct RenamePlayerProtocolImpl : IUseCaseProtocol<(PlayerId playerId, PlayerName renamedNmae)>
         {
-            public int PlayerId { get; }
+            /// <summary>
+            /// プレイヤーIDの値
+            /// </summary>
+            /// <value>The player identifier.</value>
+            private readonly long m_playerId;
 
-            public string RenamedName { get; }
+            /// <summary>
+            /// 変更後の名前の値
+            /// </summary>
+            /// <value>The name of the renamed.</value>
+            private readonly string m_renamedName;
 
-            public RenamePlayerProtocolImpl(int playerId, string renamedName) => (PlayerId, RenamedName) = (playerId, renamedName);
+            /// <summary>
+            /// コストラクタ
+            /// </summary>
+            /// <param name="playerId">Player identifier.</param>
+            /// <param name="renamedName">Renamed name.</param>
+            public RenamePlayerProtocolImpl(long playerId, string renamedName) => (m_playerId, m_renamedName) = (playerId, renamedName);
 
-            public (PlayerId playerId, PlayerName renamedNmae) ToDomainType() => (playerId: new PlayerId(PlayerId), renamedNmae: new PlayerName(RenamedName));
+            /// <summary>
+            /// ドメインタイプに変換する
+            /// </summary>
+            /// <returns>The domain type.</returns>
+            public (PlayerId playerId, PlayerName renamedNmae) ToUseCaseProtocol() => (playerId: new PlayerId(m_playerId), renamedNmae: new PlayerName(m_renamedName));
         }
     }
 }
