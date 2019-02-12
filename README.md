@@ -2,112 +2,77 @@
 
 ## フォルダ構成
 
-### main project
+* [main project](./Assets/Scripts/Main/README.md)
+* [test](./Assets/Scripts/Test/README.md)
+* [unity extension](./Assets/Scripts/Custom/README.md)
 
-```
-Assets/Scripts/Main
-    - Addapter
-        - Infrastructure
-        - UI
-    - DI
-    - Domain
-        - [ContextName]
-            - IHogeRepository.cs
-            - IHoge.cs
-            - ValueObject.cs
-        - DomainError.cs
-        - DomainResult.cs
-        - IEntity.cs
-        - IValueObject.cs
-    - UseCase
-        - [ContextName]
-        - ApplicationError.cs
-        - ApplicationResult.cs
-        - IUseCase.cs
-```
+## アーキテクチャのイメージ
 
-* Assets/Scripts/Main
-    * メインプロジェクト
-* Assets/Scripts/Main/Addapter
-    * アダプタ層
-    * UI やインフラ周りなど、仕様変更が多くなる外部とのインターフェースとなるレイヤ
-    * レイヤは最も外
-    * どこからも参照されず、アダプタ層以内のレイヤを参照する
-* Assets/Scripts/Main/Addapter/Infrastructure
-    * アダプタ層インフラ関係
-    * DB, Network, Cacheなど永続化処理の具象実装
-* Assets/Scripts/Main/Addapter/UI
-    * アダプタ層 UI 関係
-    * シーンマネージャやコンポネントなどUI全般の実装
-* Assets/Scripts/Main/DI
-    * DI関係
-    * アダプタ層からアプリケーション層を呼び出すときにどの具象実装を使うか指定するために使うなど
-* Assets/Scripts/Main/Domain
-    * ドメイン層
-    * 業務ロジックを担当する
-    * レイヤは最も内
-    * ドメイン層以外のレイヤから参照され、他のレイヤを参照しない
-* Assets/Scripts/Main/Domain/[ContextName]
-    * `境界づけられたコンテキスト` ごとの階層
-    * `ユビキタス言語` の適用範囲
-* Assets/Scripts/Main/Domain/[ContextName]/IHogeRepository.cs
-    * 永続化機構と接続するための interface
-    * interface をドメイン層、具象実装をアダプタ層に実装することで一方通行の参照関係を維持したまま、仕様変更が多くなるインフラ周りの具象実装を切り離す事ができる
-* Assets/Scripts/Main/Domain/[ContextName]/Hoge.cs
-    * エンティティ
-    * 外向けには interface のみを公開し具象実装は隠蔽する
-    * 具象実装生成用のファクトリも一緒に定義する
-* Assets/Scripts/Main/Domain/[ContextName]/ValueObect.cs
-    * 対象のコンテキスト内で使用する `value object` をまとめて定義する
-* Assets/Scripts/Main/Domain/DomainError.cs
-    * ドメイン層で発生したエラー情報
-* Assets/Scripts/Main/Domain/DomainResult.cs
-    * ドメイン層の処理結果
-* Assets/Scripts/Main/Domain/IEntity.cs
-    * エンティティ interface
-* Assets/Scripts/Main/Domain/IValueObject.cs
-    * value object interface
-* Assets/Scripts/Main/UseCase
-    * アプリケーション層
-    * ドメインロジックを用いてトランザクション整合性を担保する一連の処理をユースケースとして定義
-    * レイヤは中間
-    * アダプタ層から参照され、ドメイン層を参照する
-* Assets/Scripts/Main/UseCase/[ContextName]
-    * Domain/[ContextName] に同じ
-* Assets/Scripts/Main/UseCase/ApplicationError.cs
-    * アプリケーション層で発生したエラー情報
-* Assets/Scripts/Main/UseCase/ApplicationResult.cs
-    * アプリケーション層の処理結果
-* Assets/Scripts/Main/UseCase/IUseCase.cs
-    * ユースケース interface
+![architecture.svg](./Documents/Image/architecture.svg)
 
-### test
+## 各レイヤ間の呼び出し方
 
-```
-Assets/Scripts/Test
-    - Editor
-        - Domain
-        - UseCase
-    - Player
+### アダプタ層からアプリケーション層の呼び出し
+
+[サンプルコード](./Assets/Scripts/Test/Editor/UseCase/Player/RenamePlayerUseCaseSpec.cs)
+
+```csharp
+// use case を指定して必要な値を渡して呼び出す
+var renamePlayerUseCase = new RenamePlayerUseCase(
+    // repository のような how （どうやってするか）の部分は
+    // 関心事ではない部分のため DI できるのであれば DI するほうがベスト
+    playerRepositoryMock,
+    playerId,
+    renamedName
+    );
+
+// Execute メソッド呼び出しで use case 実行
+// UniTask 使える環境であれば UniTask に包んで返す
+// 戻りの型は IApplicationResult
+var result = renamePlayerUseCase.Execute();
 ```
 
-* Assets/Scripts/Test
-    * テストコード
-* Assets/Scripts/Test/Editor
-    * Editor Test
-* Assets/Scripts/Test/Editor/Domain
-    * メインプロジェクトに同じ
-* Assets/Scripts/Test/Editor/UseCase
-    * メインプロジェクトに同じ
-* Assets/Scripts/Test/Player
-    * Player Test
+* IEnumerable を使用した値の取り出し
 
-### unity extension
-
-```
-Assets/Scripts/Custom
+```csharp
+// IApplicationResult は IEnumerable を実装しているため
+// foreach を利用して値を取得することができる
+// なお、失敗時には値を返さないため下記ループには入らない
+// 失敗を無視して良いケースであれば使える取得方法
+foreach (var renamedPlayer in result)
+{
+    // renamedPlayer: IPlayer をこのブロック内で使える
+}
 ```
 
-* Assets/Scripts/Custom
-    * Unity 拡張全般
+* type switch を使用した値の取り出し
+
+```csharp
+// IApplicationResult は、成功時は UseCase.Success<T>, 失敗時は UseCase.Failure<T> という型になっているため
+// 以下のようにパターンマッチを利用して値を取り出すこともできる
+switch (result)
+{
+    case Success<IPlayer> success:
+        // UseCase.Success<T>#Result: T で値取得可能
+        var renamedPlayer = success.Result;
+        // renamedPlayer: IPlayer をこのブロック内で使える
+        return;
+
+    case Failure<IPlayer> failure:
+        // パターンマッチであれば失敗時パターンも記載可能
+        // 失敗の内容は UseCase.Failure<T>#Errors: IEnumerable<ApplicationError> で値取得可能
+        var errors = failure.Errors;
+        // ...
+        return;
+}
+```
+
+### アプリケーション層からドメイン層の振る舞いの呼び出し
+
+* [アダプタ層からアプリケーション層の呼び出し](#アダプタ層からアプリケーション層の呼び出し) と同じ、型が変わっただけ
+
+| アプリケーション層        | ドメイン層          |
+| ------------------------- | ------------------- |
+| UseCase.ApplicationResult | Domain.DomainResult |
+| UseCase.ApplicationError  | Domain.DomainError  |
 
