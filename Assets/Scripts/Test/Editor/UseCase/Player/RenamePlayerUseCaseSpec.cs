@@ -1,4 +1,3 @@
-using System.Linq;
 using NUnit.Framework;
 using Domain.Player;
 using UseCase.Player;
