@@ -19,17 +19,18 @@
 ```csharp
 // use case を指定して必要な値を渡して呼び出す
 var renamePlayerUseCase = new RenamePlayerUseCase(
-    // repository のような how （どうやってするか）の部分は
-    // 関心事ではない部分のため DI できるのであれば DI するほうがベスト
-    playerRepositoryMock,
-    playerId,
-    renamedName
+    // repository のような how （どうやってするか）の部分はコンストラクタで注入する
+    // DI できる環境であれば DI するほうがベスト
+    playerRepositoryMock
     );
+
+// use case にわたすためのプロトコルを用意する
+var protocol = RenamePlayerProtocol.Create(1, "renamed name");
 
 // Execute メソッド呼び出しで use case 実行
 // UniTask 使える環境であれば UniTask に包んで返す
 // 戻りの型は IApplicationResult
-var result = renamePlayerUseCase.Execute();
+var result = renamePlayerUseCase.Execute(protocol);
 ```
 
 * IEnumerable を使用した値の取り出し
