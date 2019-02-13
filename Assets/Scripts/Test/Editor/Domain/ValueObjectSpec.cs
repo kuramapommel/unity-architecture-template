@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Domain;
 using System;
+using Domain.ValueObject.Attributes;
 using static NUnit.Framework.Assert;
 
 namespace Test.Domain
@@ -30,6 +31,18 @@ namespace Test.Domain
             AreEqual(1, resultMaxCompareToMin1); // 新しい日時は古い日時 `より後` のため 1
         }
 
+        [Test]
+        public void RequireIntLengthAttributeを使用してValidationチェックできる()
+        {
+            var expected = 1;
+            var testTargetStruct = new ForRequireIntLengthAttributeTest(expected);
+
+            AreEqual(expected, testTargetStruct.Value);
+
+            var error = 2;
+            Throws<ArgumentException>(() => new ForRequireIntLengthAttributeTest(error));
+        }
+
         #region mock 定義
         /// <summary>
         /// テスト用の mock
@@ -43,5 +56,14 @@ namespace Test.Domain
             public int CompareTo(DateTime that) => Value.CompareTo(that);
         }
         #endregion
+
+        private readonly struct ForRequireIntLengthAttributeTest : IValueObject<int>
+        {
+            [RequireIntLength(min: 1, max: 1)]
+            public int Value { get; }
+
+            public ForRequireIntLengthAttributeTest(int value) =>
+                Value = value.Validated<ForRequireIntLengthAttributeTest, RequireIntLengthAttribute, int>();
+        }
     }
 }

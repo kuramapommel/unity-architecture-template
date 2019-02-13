@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace Domain
 {
@@ -41,5 +42,110 @@ namespace Domain
 
             return self.Value.CompareTo(((IValueObject<DateTime>)that).Value);
         }
+    }
+}
+
+namespace Domain.ValueObject.Attributes
+{
+    /// <summary>
+    /// ValueObject チェック用 custom attribute interface
+    /// </summary>
+    public interface IRequireAttribute<ValueType>
+    {
+        /// <summary>
+        /// バリデーションチェック
+        /// </summary>
+        /// <returns>The validate.</returns>
+        /// <param name="value">Value.</param>
+        bool Validate(ValueType value);
+    }
+
+    /// <summary>
+    /// int 値の length を制限するためのバリデーション用 custom attribute
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class RequireIntLengthAttribute : Attribute, IRequireAttribute<int>
+    {
+        /// <summary>
+        /// 最低値
+        /// </summary>
+        /// <value>The minimum.</value>
+        public int Min { get; }
+
+        /// <summary>
+        /// 最大値
+        /// </summary>
+        /// <value>The max.</value>
+        public int Max { get; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="min">Minimum.</param>
+        /// <param name="max">Max.</param>
+        public RequireIntLengthAttribute(int min = int.MinValue, int max = int.MaxValue) => (Min, Max) = (min, max);
+
+        /// <summary>
+        /// バリデーションチェック
+        /// </summary>
+        /// <returns>The validate.</returns>
+        /// <param name="value">Value.</param>
+        public bool Validate(int value) => Min <= value && value <= Max;
+    }
+
+    /// <summary>
+    /// long 値の length を制限するためのバリデーション用 custom attribute
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class RequireLongLengthAttribute : Attribute, IRequireAttribute<long>
+    {
+        /// <summary>
+        /// 最低値
+        /// </summary>
+        /// <value>The minimum.</value>
+        public long Min { get; }
+
+        /// <summary>
+        /// 最大値
+        /// </summary>
+        /// <value>The max.</value>
+        public long Max { get; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="min">Minimum.</param>
+        /// <param name="max">Max.</param>
+        public RequireLongLengthAttribute(long min = long.MinValue, long max = long.MaxValue) => (Min, Max) = (min, max);
+
+        /// <summary>
+        /// バリデーションチェック
+        /// </summary>
+        /// <returns>The validate.</returns>
+        /// <param name="value">Value.</param>
+        public bool Validate(long value) => Min <= value && value <= Max;
+    }
+
+    /// <summary>
+    /// value object の値の拡張メソッドクラス
+    /// </summary>
+    public static class ValueExt
+    {
+        /// <summary>
+        /// custom attribute を利用したバリデーションチェック
+        /// </summary>
+        /// <returns>The validated.</returns>
+        /// <param name="value">Value.</param>
+        /// <typeparam name="ValueObjectType">The 1st type parameter.</typeparam>
+        /// <typeparam name="AttributeType">The 2nd type parameter.</typeparam>
+        /// <typeparam name="ValueType">The 3rd type parameter.</typeparam>
+        /// <remarks>バリデーションエラー時は ArgumentException を投げる</remarks>
+        public static ValueType Validated<ValueObjectType, AttributeType, ValueType>(this ValueType value)
+            where ValueObjectType : IValueObject<ValueType>
+            where AttributeType : class, IRequireAttribute<ValueType> =>
+            typeof(ValueObjectType)
+                .GetProperties()
+                .SelectMany(property => property.GetCustomAttributes(typeof(AttributeType), false))
+                .FirstOrDefault() is AttributeType attribute && attribute.Validate(value) ? value : throw new ArgumentException();
     }
 }

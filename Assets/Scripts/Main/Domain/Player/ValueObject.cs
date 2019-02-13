@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using Domain.ValueObject.Attributes;
 
 namespace Domain.Player
 {
@@ -21,13 +22,14 @@ namespace Domain.Player
         /// 識別子の値
         /// </summary>
         /// <value>The value.</value>
+        [RequireLongLength(min: 1, max: 999999999999)]
         public long Value { get; }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="value">Value.</param>
-        public PlayerId(long value) => Value = value;
+        public PlayerId(long value) => Value = value.Validated<PlayerId, RequireLongLengthAttribute, long>();
 
         /// <summary>
         /// 等価比較
