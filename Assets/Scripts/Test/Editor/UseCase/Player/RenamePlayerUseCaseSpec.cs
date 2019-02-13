@@ -2,6 +2,7 @@ using NUnit.Framework;
 using Domain.Player;
 using UseCase.Player;
 using UseCase;
+using System.Linq;
 using static NUnit.Framework.Assert;
 
 namespace Test.UseCase.Player
@@ -26,22 +27,28 @@ namespace Test.UseCase.Player
             var renamedName = protocol.ToUseCaseProtocol().renamedNmae;
             var result = renamePlayerUseCase.Execute(protocol);
 
-            // IEnumerable による値取得のテスト
-            foreach (var savedPlayer in result)
+            // foreach による値取得のテスト
+            foreach (var renamedPlayerForeach in result)
             {
-                AreEqual(playerMock, savedPlayer); // player id が変わっていないことのテスト
-                AreNotEqual(playerName, savedPlayer.Name); // 名前が変わっていることのテスト
-                AreEqual(renamedName, savedPlayer.Name); // 名前が renamedName に変わっていることのテスト
+                AreEqual(playerMock, renamedPlayerForeach); // player id が変わっていないことのテスト
+                AreNotEqual(playerName, renamedPlayerForeach.Name); // 名前が変わっていることのテスト
+                AreEqual(renamedName, renamedPlayerForeach.Name); // 名前が renamedName に変わっていることのテスト
             }
+
+            // linq による値取得のテスト
+            var renamedPlayerLinq = result.FirstOrDefault();
+            AreEqual(playerMock, renamedPlayerLinq); // player id が変わっていないことのテスト
+            AreNotEqual(playerName, renamedPlayerLinq.Name); // 名前が変わっていることのテスト
+            AreEqual(renamedName, renamedPlayerLinq.Name); // 名前が renamedName に変わっていることのテスト
 
             // type switch による値取得のテスト
             switch (result)
             {
                 case Success<IPlayer> success:
-                    var savedPlayer = success.Result;
-                    AreEqual(playerMock, savedPlayer); // player id が変わっていないことのテスト
-                    AreNotEqual(playerName, savedPlayer.Name); // 名前が変わっていることのテスト
-                    AreEqual(renamedName, savedPlayer.Name); // 名前が renamedName に変わっていることのテスト
+                    var renamedPlayerTypeSwitch = success.Result;
+                    AreEqual(playerMock, renamedPlayerTypeSwitch); // player id が変わっていないことのテスト
+                    AreNotEqual(playerName, renamedPlayerTypeSwitch.Name); // 名前が変わっていることのテスト
+                    AreEqual(renamedName, renamedPlayerTypeSwitch.Name); // 名前が renamedName に変わっていることのテスト
                     return;
 
                 default:

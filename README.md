@@ -33,7 +33,7 @@ var protocol = RenamePlayerProtocol.Create(1, "renamed name");
 var result = renamePlayerUseCase.Execute(protocol);
 ```
 
-* IEnumerable を使用した値の取り出し
+* foreach を使用した値の取り出し
 
 ```csharp
 // IApplicationResult は IEnumerable を実装しているため
@@ -44,6 +44,14 @@ foreach (var renamedPlayer in result)
 {
     // renamedPlayer: IPlayer をこのブロック内で使える
 }
+```
+
+* LINQ を使用した値の取り出し
+
+```csharp
+// もちろん LINQ も使える
+// こちらも失敗を無視して良いケースであれば使える取得方法
+var renamedPlayer = result.FirstOrDefault();
 ```
 
 * type switch を使用した値の取り出し
