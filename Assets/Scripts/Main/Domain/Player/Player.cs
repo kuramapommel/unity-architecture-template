@@ -119,9 +119,9 @@ namespace Domain.Player
             );
 
             /// <summary>
-            /// コピー
+            /// 名前変更
             /// </summary>
-            /// <returns>The copy.</returns>
+            /// <returns>The rename.</returns>
             /// <param name="name">Name.</param>
             /// 状態の変化は新しいオブジェクトを生成することで immutable に実現する
             /// 振る舞いは関連する一連の処理（トランザクション整合性を担保する処理）を一つのふるまいとして記述する
