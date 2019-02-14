@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Exceptions;
 
 namespace Domain
 {
@@ -36,22 +37,19 @@ namespace Domain
         Exception Exception { get; }
     }
 
-    /// <summary>
-    ///  Value Object 生成エラー
-    /// </summary>
-    public readonly struct ValueObjectCreatedError : IDomainError
+    public readonly struct UnexpectedError : IDomainError
     {
         /// <summary>
         /// 例外文言
         /// </summary>
         /// <value>The message.</value>
-        public string Message { get; }
+        public string Message => "想定外の例外が発生しました";
 
         /// <summary>
         /// エラーレベル
         /// </summary>
         /// <value>The level.</value>
-        public ErrorLevel Level { get; }
+        public ErrorLevel Level => ErrorLevel.ERROR;
 
         /// <summary>
         /// 例外本体
@@ -63,16 +61,54 @@ namespace Domain
         /// コンストラクタ
         /// </summary>
         /// <param name="exception">Exception.</param>
-        public ValueObjectCreatedError(Exception exception) => (Message, Level, Exception) = ("Value Object のインスタンス化に失敗しました", ErrorLevel.ERROR, exception);
+        public UnexpectedError(Exception exception = null) => Exception = exception ?? new UnexpectedException();
+    }
+
+    /// <summary>
+    ///  Value Object 生成エラー
+    /// </summary>
+    public readonly struct ValueObjectCreatedError : IDomainError
+    {
+        /// <summary>
+        /// 例外文言
+        /// </summary>
+        /// <value>The message.</value>
+        public string Message => "Value Object のインスタンス化に失敗しました";
+
+        /// <summary>
+        /// エラーレベル
+        /// </summary>
+        /// <value>The level.</value>
+        public ErrorLevel Level => ErrorLevel.ERROR;
+
+        /// <summary>
+        /// 例外本体
+        /// </summary>
+        /// <value>The exception.</value>
+        public Exception Exception { get; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="exception">Exception.</param>
+        public ValueObjectCreatedError(Exception exception) => Exception = exception;
     }
 }
 
 namespace Domain.Exceptions
 {
     /// <summary>
+    /// ドメイン層の例外
+    /// </summary>
+    public abstract class DomainException : Exception { }
+
+    /// <summary>
     /// 検証例外
     /// </summary>
-    public sealed class ValidationException : Exception
-    {
-    }
+    public sealed class ValidationException : DomainException { }
+
+    /// <summary>
+    /// 想定外の例外
+    /// </summary>
+    public sealed class UnexpectedException : DomainException { }
 }

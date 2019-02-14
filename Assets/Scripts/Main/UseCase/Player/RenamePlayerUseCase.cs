@@ -1,5 +1,4 @@
 using Domain.Player;
-using System.Linq;
 
 namespace UseCase.Player
 {
@@ -47,8 +46,7 @@ namespace UseCase.Player
                     return ApplicationResult.Success(savedPlayer);
             }
 
-            // TODO 想定外の例外であることを詰めて返す
-            return ApplicationResult.Failure<IPlayer>();
+            return ApplicationResult.Failure<IPlayer>(Error.UnexpectedError());
         }
     }
 

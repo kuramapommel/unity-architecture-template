@@ -32,8 +32,8 @@ namespace UseCase
         /// <summary>
         /// 失敗内容
         /// </summary>
-        /// <value>The errors.</value>
-        IEnumerable<ApplicationError> Errors { get; }
+        /// <value>The reason.</value>
+        IApplicationError Reason { get; }
     }
 
     /// <summary>
@@ -53,15 +53,8 @@ namespace UseCase
         /// 失敗結果生成ファクトリ
         /// </summary>
         /// <returns>The failure.</returns>
-        /// <param name="errors">Errors.</param>
-        public static IApplicationResult<ResultType> Failure<ResultType>(params ApplicationError[] errors) => new FailureImpl<ResultType>(errors);
-
-        /// <summary>
-        /// 失敗結果生成ファクトリ
-        /// </summary>
-        /// <returns>The failure.</returns>
-        /// <param name="errors">Errors.</param>
-        public static IApplicationResult<ResultType> Failure<ResultType>(IEnumerable<ApplicationError> errors) => new FailureImpl<ResultType>(errors);
+        /// <param name="reason">Reason.</param>
+        public static IApplicationResult<ResultType> Failure<ResultType>(IApplicationError reason) => new FailureImpl<ResultType>(reason);
 
         /// <summary>
         /// 成功結果具象実装構造体
@@ -104,14 +97,14 @@ namespace UseCase
             /// <summary>
             /// 失敗内容
             /// </summary>
-            /// <value>The errors.</value>
-            public IEnumerable<ApplicationError> Errors { get; }
+            /// <value>The reason.</value>
+            public IApplicationError Reason { get; }
 
             /// <summary>
             /// コンストラクタ
             /// </summary>
-            /// <param name="errors">Errors.</param>
-            public FailureImpl(IEnumerable<ApplicationError> errors) => Errors = errors;
+            /// <param name="reason">Reason.</param>
+            public FailureImpl(IApplicationError reason) => Reason = reason;
 
             /// <summary>
             /// IEnumerable実装
