@@ -39,7 +39,7 @@ namespace UseCase.Player
             switch (renamedPlayerResult)
             {
                 case Domain.Failure<IPlayer> failure:
-                    return ApplicationResult.Failure<IPlayer>(failure.Errors.Select(error => error.ToApplicationError()));
+                    return ApplicationResult.Failure<IPlayer>(failure.Reason.ToApplicationError());
 
                 case Domain.Success<IPlayer> success:
                     var renamedPlayer = success.Result;

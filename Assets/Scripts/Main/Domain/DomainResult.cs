@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 
 namespace Domain
 {
@@ -30,8 +31,8 @@ namespace Domain
         /// <summary>
         /// 失敗内容
         /// </summary>
-        /// <value>The errors.</value>
-        IEnumerable<DomainError> Errors { get; }
+        /// <value>The reason.</value>
+        IDomainError Reason { get; }
     }
 
     /// <summary>
@@ -51,15 +52,8 @@ namespace Domain
         /// 失敗結果生成ファクトリ
         /// </summary>
         /// <returns>The failure.</returns>
-        /// <param name="errors">Errors.</param>
-        public static IDomainResult<ResultType> Failure<ResultType>(params DomainError[] errors) => new FailureImpl<ResultType>(errors);
-
-        /// <summary>
-        /// 失敗結果生成ファクトリ
-        /// </summary>
-        /// <returns>The failure.</returns>
-        /// <param name="errors">Errors.</param>
-        public static IDomainResult<ResultType> Failure<ResultType>(IEnumerable<DomainError> errors) => new FailureImpl<ResultType>(errors);
+        /// <param name="reason">Reason.</param>
+        public static IDomainResult<ResultType> Failure<ResultType>(IDomainError reason) => new FailureImpl<ResultType>(reason);
 
         /// <summary>
         /// 成功結果具象実装構造体
@@ -103,13 +97,13 @@ namespace Domain
             /// 失敗内容
             /// </summary>
             /// <value>The errors.</value>
-            public IEnumerable<DomainError> Errors { get; }
+            public IDomainError Reason { get; }
 
             /// <summary>
             /// コンストラクタ
             /// </summary>
-            /// <param name="errors">Errors.</param>
-            public FailureImpl(IEnumerable<DomainError> errors) => Errors = errors;
+            /// <param name="reason">Reason.</param>
+            public FailureImpl(IDomainError reason) => Reason = reason;
 
             /// <summary>
             /// IEnumerable実装

@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Domain;
+using System;
 using static NUnit.Framework.Assert;
 
 namespace Test.Domain
@@ -9,12 +10,17 @@ namespace Test.Domain
         [Test]
         public void DomainResultはコンストラクタで注入したエラー情報を保持する()
         {
-            var domainError = new DomainError();
+            var domainError = new DomainErrorMock();
             var domainResult = DomainResult.Failure<int>(domainError);
 
-            foreach (var error in ((Failure<int>)domainResult).Errors)
+
+            if (domainResult is Failure<int> failure)
             {
-                AreEqual(domainError, error);
+                AreEqual(domainError, failure.Reason);
+            }
+            else
+            {
+                Fail();
             }
         }
 
@@ -28,6 +34,15 @@ namespace Test.Domain
             {
                 AreEqual(expect, result);
             }
+        }
+
+        private readonly struct DomainErrorMock : IDomainError
+        {
+            public string Message => "";
+
+            public ErrorLevel Level => ErrorLevel.WARNING;
+
+            public Exception Exception => new Exception();
         }
     }
 }

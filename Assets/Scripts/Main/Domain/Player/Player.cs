@@ -6,6 +6,7 @@
  */
 
 using System;
+using Domain.Exceptions;
 
 namespace Domain.Player
 {
@@ -127,11 +128,21 @@ namespace Domain.Player
             /// 振る舞いは関連する一連の処理（トランザクション整合性を担保する処理）を一つのふるまいとして記述する
             /// ここでは名前を変更することによって、プレイヤー更新日時も変わるため合わせて更新し、
             /// 識別子など変わらない部分はそのままプロパティの値を注入する
-            public IDomainResult<IPlayer> Rename(PlayerName name) => DomainResult.Success<IPlayer>(new PlayerImpl(
-                Id,
-                name,
-                CreateAt,
-                new PlayerUpdateAt(DateTime.Now)));
+            public IDomainResult<IPlayer> Rename(PlayerName name)
+            {
+                try
+                {
+                    return DomainResult.Success<IPlayer>(new PlayerImpl(
+                        Id,
+                        name,
+                        CreateAt,
+                        new PlayerUpdateAt(DateTime.Now)));
+                }
+                catch(ValidateException e)
+                {
+                    return DomainResult.Failure<IPlayer>(new ValueObjectCreatedError(e));
+                }
+            }
 
             /// <summary>
             /// 等価比較

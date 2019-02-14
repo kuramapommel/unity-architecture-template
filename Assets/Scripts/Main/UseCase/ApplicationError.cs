@@ -1,4 +1,5 @@
 using Domain;
+using System;
 
 namespace UseCase
 {
@@ -7,11 +8,11 @@ namespace UseCase
     /// </summary>
     public readonly struct ApplicationError
     {
-        public ApplicationError(DomainError domainError) { }
+        public ApplicationError(IDomainError domainError) { }
     }
 
     public static class DomainErrorExt
     {
-        public static ApplicationError ToApplicationError(this DomainError domainError) => new ApplicationError(domainError);
+        public static ApplicationError ToApplicationError(this IDomainError domainError) => new ApplicationError(domainError);
     }
 }
