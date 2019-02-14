@@ -93,6 +93,33 @@ namespace Domain
         /// <param name="exception">Exception.</param>
         public ValueObjectCreatedError(Exception exception) => Exception = exception;
     }
+
+    public readonly struct ValidationError : IDomainError
+    {
+        /// <summary>
+        /// 例外文言
+        /// </summary>
+        /// <value>The message.</value>
+        public string Message => Exception.Message;
+
+        /// <summary>
+        /// エラーレベル
+        /// </summary>
+        /// <value>The level.</value>
+        public ErrorLevel Level { get; }
+
+        /// <summary>
+        /// 例外本体
+        /// </summary>
+        /// <value>The exception.</value>
+        public Exception Exception { get; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="exception">Exception.</param>
+        public ValidationError(ValidationException exception, ErrorLevel level) => (Exception, Level) = (exception, level);
+    }
 }
 
 namespace Domain.Exceptions

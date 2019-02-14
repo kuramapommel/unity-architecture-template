@@ -1,5 +1,7 @@
-using System.Collections.Generic;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using Domain;
 
 namespace UseCase
 {
@@ -55,6 +57,14 @@ namespace UseCase
         /// <returns>The failure.</returns>
         /// <param name="reason">Reason.</param>
         public static IApplicationResult<ResultType> Failure<ResultType>(IApplicationError reason) => new FailureImpl<ResultType>(reason);
+
+        /// <summary>
+        /// 想定外の例外
+        /// </summary>
+        /// <returns>The unexpected.</returns>
+        /// <param name="exception">Exception.</param>
+        /// <typeparam name="ResultType">The 1st type parameter.</typeparam>
+        public static IApplicationResult<ResultType> Unexpected<ResultType>(Exception exception = null) => new FailureImpl<ResultType>(new Error(new UnexpectedError(exception)));
 
         /// <summary>
         /// 成功結果具象実装構造体

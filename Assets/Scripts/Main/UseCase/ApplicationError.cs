@@ -65,12 +65,6 @@ namespace UseCase
     public sealed class Error : IApplicationError
     {
         /// <summary>
-        /// 想定外のエラーファクトリ
-        /// </summary>
-        /// <returns>The error.</returns>
-        public static IApplicationError UnexpectedError() => new Error(new UnexpectedError());
-
-        /// <summary>
         /// 例外文言
         /// </summary>
         /// <value>The message.</value>

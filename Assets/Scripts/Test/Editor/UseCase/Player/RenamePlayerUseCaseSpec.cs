@@ -24,7 +24,7 @@ namespace Test.UseCase.Player
             var protocol = RenamePlayerProtocol.Create(longPlayerId, "renamed name");
             var renamePlayerUseCase = new RenamePlayerUseCase(playerRepositoryMock);
 
-            var renamedName = protocol.ToUseCaseProtocol().renamedNmae;
+            var renamedName = protocol.ToUseCaseProtocol().renamedName;
             var result = renamePlayerUseCase.Execute(protocol);
 
             // foreach による値取得のテスト
