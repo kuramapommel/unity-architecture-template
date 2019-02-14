@@ -2,11 +2,14 @@
 
 namespace Domain
 {
+    /// <summary>
+    /// エラーレベル
+    /// </summary>
     public enum ErrorLevel
     {
         ERROR,
         WARNING,
-        IGNORE
+        IGNORED
     }
 
     /// <summary>
@@ -66,8 +69,10 @@ namespace Domain
 
 namespace Domain.Exceptions
 {
-    public sealed class ValidateException : Exception
+    /// <summary>
+    /// 検証例外
+    /// </summary>
+    public sealed class ValidationException : Exception
     {
-
     }
 }

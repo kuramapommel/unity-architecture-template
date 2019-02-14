@@ -138,7 +138,7 @@ namespace Domain.Player
                         CreateAt,
                         new PlayerUpdateAt(DateTime.Now)));
                 }
-                catch(ValidateException e)
+                catch(ValidationException e)
                 {
                     return DomainResult.Failure<IPlayer>(new ValueObjectCreatedError(e));
                 }
