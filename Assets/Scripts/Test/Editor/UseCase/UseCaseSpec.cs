@@ -7,6 +7,9 @@ using BaseUseCase = UseCase.UseCase<int, int>;
 using ErrorLevel = Domain.ErrorLevel;
 using ValidationException = Domain.Exceptions.ValidationException;
 using Failure = UseCase.Failure<int>;
+using IDomainResult = Domain.IDomainResult<int>;
+using DomainResult = Domain.DomainResult;
+using ValidationError = Domain.ValidationError;
 
 namespace Test.UseCase
 {
@@ -52,20 +55,18 @@ namespace Test.UseCase
 
         private sealed class ErrorUseCaseMock : BaseUseCase
         {
-            protected override ErrorLevel ValidationErrorLevel => ErrorLevel.ERROR;
-
             protected override IApplicationResult<int> ExecuteImpl(int protocol) =>
                 throw new NotImplementedException();
         }
 
         private readonly struct ValidationErrorProtocol : IProtocol<int>
         {
-            public int ToUseCaseProtocol() => throw new ValidationException(ValidationErrorMessage);
+            public IDomainResult ToUseCaseProtocol() => DomainResult.Failure<int>(new ValidationError(new ValidationException(ValidationErrorMessage), ErrorLevel.WARNING));
         }
 
         private readonly struct ValidationOKProtocol : IProtocol<int>
         {
-            public int ToUseCaseProtocol() => 1;
+            public IDomainResult ToUseCaseProtocol() => DomainResult.Success(1);
         }
     }
 }

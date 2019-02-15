@@ -96,7 +96,7 @@ namespace Domain
             /// <summary>
             /// 失敗内容
             /// </summary>
-            /// <value>The errors.</value>
+            /// <value>The reason.</value>
             public IDomainError Reason { get; }
 
             /// <summary>

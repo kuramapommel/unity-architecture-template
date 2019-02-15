@@ -4,18 +4,6 @@ using static Domain.ErrorLevel;
 namespace UseCase
 {
     /// <summary>
-    /// アプリケーション層で発生した例外を包むための構造体
-    /// </summary>
-    public readonly struct ApplicationError
-    {
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="domainError">Domain error.</param>
-        public ApplicationError(IDomainError domainError) { }
-    }
-
-    /// <summary>
     /// ドメイン層エラーの拡張メソッドクラス
     /// </summary>
     public static class DomainErrorExt
@@ -33,11 +21,11 @@ namespace UseCase
                     return new Error(domainError);
                 case WARNING:
                     return new Warning(domainError);
-                case IGNORED:
-                    return new Ignored(domainError);
+                case IGNORABLE:
+                    return new Ignorable(domainError);
             }
 
-            return new Error(domainError);
+            return new Error(new UnexpectedError());
         }
     }
 
@@ -110,7 +98,7 @@ namespace UseCase
     /// <summary>
     /// 自己復旧可能例外
     /// </summary>
-    public sealed class Ignored : IApplicationError
+    public sealed class Ignorable : IApplicationError
     {
         /// <summary>
         /// 例外文言
@@ -128,6 +116,6 @@ namespace UseCase
         /// コンストラクタ
         /// </summary>
         /// <param name="domainError">Domain error.</param>
-        public Ignored(IDomainError domainError) => DomainError = domainError;
+        public Ignorable(IDomainError domainError) => DomainError = domainError;
     }
 }

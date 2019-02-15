@@ -13,7 +13,7 @@ namespace UseCase
         /// アプリケーション層以下で使用する型に変換する
         /// </summary>
         /// <returns>The use case protocol.</returns>
-        UseCaseProtocol ToUseCaseProtocol();
+        IDomainResult<UseCaseProtocol> ToUseCaseProtocol();
     }
 
     /// <summary>
@@ -29,38 +29,16 @@ namespace UseCase
         protected abstract IApplicationResult<ResultType> ExecuteImpl(ProtocolDomainType protocol);
 
         /// <summary>
-        /// プロトコルバリデーションエラー時のエラーレベル
-        /// </summary>
-        /// <value>The validation error level.</value>
-        protected abstract ErrorLevel ValidationErrorLevel { get; }
-
-        /// <summary>
         /// ユースケース実行
         /// </summary>
         /// <returns>The execute.</returns>
         /// <param name="protocol">Protocol.</param>
         public IApplicationResult<ResultType> Execute(IProtocol<ProtocolDomainType> protocol)
         {
-            /// <summary>
-            /// バリデータ
-            /// </summary>
-            /// <returns>The validated.</returns>
-            IDomainResult<ProtocolDomainType> validate()
-            {
-                try
-                {
-                    return DomainResult.Success(protocol.ToUseCaseProtocol());
-                }
-                catch (ValidationException exception)
-                {
-                    return DomainResult.Failure<ProtocolDomainType>(new ValidationError(exception, ValidationErrorLevel));
-                }
-            }
-
             try
             {
-                var validated = validate();
-                switch (validated)
+                var tryConverted = protocol.ToUseCaseProtocol();
+                switch (tryConverted)
                 {
                     // バリデーション結果がエラーの場合はその情報を詰めて返す
                     case Domain.Failure<ProtocolDomainType> failure:

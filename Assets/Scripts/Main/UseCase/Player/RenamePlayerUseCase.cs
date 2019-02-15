@@ -17,12 +17,6 @@ namespace UseCase.Player
         private readonly IPlayerRepository m_playerRepository;
 
         /// <summary>
-        /// バリデーションエラーレベル
-        /// </summary>
-        /// <value>The validation error level.</value>
-        protected override ErrorLevel ValidationErrorLevel => ErrorLevel.WARNING;
-
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="playerRepository">Player repository.</param>
@@ -101,10 +95,20 @@ namespace UseCase.Player
             public RenamePlayerProtocolImpl(long playerId, string renamedName) => (m_playerId, m_renamedName) = (playerId, renamedName);
 
             /// <summary>
-            /// ドメインタイプに変換する
+            /// アプリケーション層以下で使用する型に変換する
             /// </summary>
-            /// <returns>The domain type.</returns>
-            public (PlayerId playerId, PlayerName renamedName) ToUseCaseProtocol() => (playerId: new PlayerId(m_playerId), renamedName: new PlayerName(m_renamedName));
+            /// <returns>The use case protocol.</returns>
+            public IDomainResult<(PlayerId playerId, PlayerName renamedName)> ToUseCaseProtocol()
+            {
+                try
+                {
+                    return DomainResult.Success((playerId: new PlayerId(m_playerId), renamedNmae: new PlayerName(m_renamedName)));
+                }
+                catch (ValidationException exception)
+                {
+                    return DomainResult.Failure<(PlayerId playerId, PlayerName renamedNmae)>(new ValidationError(exception, ErrorLevel.WARNING));
+                }
+            }
         }
     }
     #endregion
