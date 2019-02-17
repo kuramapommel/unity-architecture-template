@@ -33,19 +33,13 @@ namespace UseCase.Player
         /// <param name="protocol">Protocol.</param>
         protected override IApplicationResult<IPlayer> ExecuteImpl((PlayerId playerId, PlayerName renamedName) protocol)
         {
-            var findedPlayerResult = m_playerRepository.FindById(protocol.playerId);
-            if (findedPlayerResult is Domain.Failure<IPlayer> failureFindedPlayer) return ApplicationResult.Failure<IPlayer>(failureFindedPlayer.Reason.ToApplicationError());
+            var result = m_playerRepository.FindById(protocol.playerId)
+                .SelectMany(player => player.Rename(protocol.renamedName))
+                .SelectMany(player => m_playerRepository.Save(player))
+                .FirstOrDefault();
 
-            var findedPlayer = findedPlayerResult.First();
-            var renamedPlayerResult = findedPlayer.Rename(protocol.renamedName);
-            if (renamedPlayerResult is Domain.Failure<IPlayer> failureRenamedPlayer) return ApplicationResult.Failure<IPlayer>(failureRenamedPlayer.Reason.ToApplicationError());
-
-            var renamedPlayer = renamedPlayerResult.First();
-            var savedPlayerResult = m_playerRepository.Save(renamedPlayer);
-            if (savedPlayerResult is Domain.Failure<IPlayer> failureSavedPlayer) return ApplicationResult.Failure<IPlayer>(failureSavedPlayer.Reason.ToApplicationError());
-
-            var savedPlayer = savedPlayerResult.First();
-            return ApplicationResult.Success(savedPlayer);
+            // TODO Failure のとき処理対応する
+            return result != null ? ApplicationResult.Success(result) : ApplicationResult.Unexpected<IPlayer>();
         }
     }
 
