@@ -1,9 +1,11 @@
 using NUnit.Framework;
+using Domain;
 using Domain.Player;
 using UseCase.Player;
 using UseCase;
 using System.Linq;
 using static NUnit.Framework.Assert;
+using UseCaseSuccess = UseCase.Success<Domain.Player.IPlayer>;
 
 namespace Test.UseCase.Player
 {
@@ -44,7 +46,7 @@ namespace Test.UseCase.Player
             // type switch による値取得のテスト
             switch (result)
             {
-                case Success<IPlayer> success:
+                case UseCaseSuccess success:
                     var renamedPlayerTypeSwitch = success.Result;
                     AreEqual(playerMock, renamedPlayerTypeSwitch); // player id が変わっていないことのテスト
                     AreNotEqual(playerName, renamedPlayerTypeSwitch.Name); // 名前が変わっていることのテスト
@@ -63,9 +65,9 @@ namespace Test.UseCase.Player
 
             public PlayerRepositoryMock(IPlayer playerMock) => m_playerMock = playerMock;
 
-            public IPlayer FindById(PlayerId id) => m_playerMock;
+            public IDomainResult<IPlayer> FindById(PlayerId id) => DomainResult.Success(m_playerMock);
 
-            public IPlayer Save(IPlayer player) => player;
+            public IDomainResult<IPlayer> Save(IPlayer player) => DomainResult.Success(player);
         }
     }
 }

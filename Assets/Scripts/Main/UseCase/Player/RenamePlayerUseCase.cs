@@ -1,6 +1,7 @@
 using Domain;
 using Domain.Player;
 using Domain.Exceptions;
+using System.Linq;
 
 namespace UseCase.Player
 {
@@ -32,8 +33,10 @@ namespace UseCase.Player
         /// <param name="protocol">Protocol.</param>
         protected override IApplicationResult<IPlayer> ExecuteImpl((PlayerId playerId, PlayerName renamedName) protocol)
         {
-            var player = m_playerRepository.FindById(protocol.playerId);
+            var playerResult = m_playerRepository.FindById(protocol.playerId);
+            if (playerResult is Domain.Failure<IPlayer> failurePlayer) return ApplicationResult.Failure<IPlayer>(failurePlayer.Reason.ToApplicationError());
 
+            var player = playerResult.First();
             var renamedPlayerResult = player.Rename(protocol.renamedName);
 
             // type switch を使ってパターンマッチで failure/success を実装する
@@ -44,7 +47,9 @@ namespace UseCase.Player
 
                 case Domain.Success<IPlayer> success:
                     var renamedPlayer = success.Result;
-                    var savedPlayer = m_playerRepository.Save(renamedPlayer);
+                    var savedPlayerResult = m_playerRepository.Save(renamedPlayer);
+                    if (savedPlayerResult is Domain.Failure<IPlayer> failureSavedPlayer) return ApplicationResult.Failure<IPlayer>(failureSavedPlayer.Reason.ToApplicationError());
+                    var savedPlayer = savedPlayerResult.First();
                     return ApplicationResult.Success(savedPlayer);
             }
 

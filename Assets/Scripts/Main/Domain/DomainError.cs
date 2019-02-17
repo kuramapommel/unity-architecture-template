@@ -126,4 +126,16 @@ namespace Domain
         /// <param name="exception">Exception.</param>
         public ValidationError(ValidationException exception, ErrorLevel level) => (Exception, Level) = (exception, level);
     }
+
+    public readonly struct NotFoundError : IDomainError
+    {
+        public string Message { get; }
+
+        public ErrorLevel Level { get; }
+
+        public Exception Exception { get; }
+
+        public NotFoundError(string message, Exception exception, ErrorLevel level) => (Message, Level, Exception) = (message, level, exception);
+
+    }
 }

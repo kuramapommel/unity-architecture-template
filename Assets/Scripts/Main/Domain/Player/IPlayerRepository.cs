@@ -1,4 +1,6 @@
-﻿namespace Domain.Player
+﻿using Domain;
+
+namespace Domain.Player
 {
     /// <summary>
     /// プレイヤーリポジトリ
@@ -13,13 +15,13 @@
         /// </summary>
         /// <returns>The by identifier.</returns>
         /// <param name="id">Identifier.</param>
-        IPlayer FindById(PlayerId id);
+        IDomainResult<IPlayer> FindById(PlayerId id);
 
         /// <summary>
         /// プレイヤーを保存する
         /// </summary>
         /// <returns>The save.</returns>
         /// <param name="player">Player.</param>
-        IPlayer Save(IPlayer player);
+        IDomainResult<IPlayer> Save(IPlayer player);
     }
 }
