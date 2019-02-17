@@ -33,27 +33,19 @@ namespace UseCase.Player
         /// <param name="protocol">Protocol.</param>
         protected override IApplicationResult<IPlayer> ExecuteImpl((PlayerId playerId, PlayerName renamedName) protocol)
         {
-            var playerResult = m_playerRepository.FindById(protocol.playerId);
-            if (playerResult is Domain.Failure<IPlayer> failurePlayer) return ApplicationResult.Failure<IPlayer>(failurePlayer.Reason.ToApplicationError());
+            var findedPlayerResult = m_playerRepository.FindById(protocol.playerId);
+            if (findedPlayerResult is Domain.Failure<IPlayer> failureFindedPlayer) return ApplicationResult.Failure<IPlayer>(failureFindedPlayer.Reason.ToApplicationError());
 
-            var player = playerResult.First();
-            var renamedPlayerResult = player.Rename(protocol.renamedName);
+            var findedPlayer = findedPlayerResult.First();
+            var renamedPlayerResult = findedPlayer.Rename(protocol.renamedName);
+            if (renamedPlayerResult is Domain.Failure<IPlayer> failureRenamedPlayer) return ApplicationResult.Failure<IPlayer>(failureRenamedPlayer.Reason.ToApplicationError());
 
-            // type switch を使ってパターンマッチで failure/success を実装する
-            switch (renamedPlayerResult)
-            {
-                case Domain.Failure<IPlayer> failure:
-                    return ApplicationResult.Failure<IPlayer>(failure.Reason.ToApplicationError());
+            var renamedPlayer = renamedPlayerResult.First();
+            var savedPlayerResult = m_playerRepository.Save(renamedPlayer);
+            if (savedPlayerResult is Domain.Failure<IPlayer> failureSavedPlayer) return ApplicationResult.Failure<IPlayer>(failureSavedPlayer.Reason.ToApplicationError());
 
-                case Domain.Success<IPlayer> success:
-                    var renamedPlayer = success.Result;
-                    var savedPlayerResult = m_playerRepository.Save(renamedPlayer);
-                    if (savedPlayerResult is Domain.Failure<IPlayer> failureSavedPlayer) return ApplicationResult.Failure<IPlayer>(failureSavedPlayer.Reason.ToApplicationError());
-                    var savedPlayer = savedPlayerResult.First();
-                    return ApplicationResult.Success(savedPlayer);
-            }
-
-            return ApplicationResult.Unexpected<IPlayer>();
+            var savedPlayer = savedPlayerResult.First();
+            return ApplicationResult.Success(savedPlayer);
         }
     }
 
