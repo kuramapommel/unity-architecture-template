@@ -6,6 +6,7 @@ using UseCase;
 using System.Linq;
 using static NUnit.Framework.Assert;
 using UseCaseSuccess = UseCase.Success<Domain.Player.IPlayer>;
+using UseCaseFailure = UseCase.Failure<Domain.Player.IPlayer>;
 
 namespace Test.UseCase.Player
 {
@@ -59,6 +60,64 @@ namespace Test.UseCase.Player
             }
         }
 
+        [Test]
+        public void プレイヤーデータ取得時に失敗した場合その情報を取得できる()
+        {
+            #region 下ごしらえ
+            var longPlayerId = 1L;
+            var playerId = new PlayerId(longPlayerId);
+            var playerName = new PlayerName("name");
+            var playerMock = PlayerFactory.Create(playerId, playerName);
+            var playerRepositoryMock = new PlayerRepositoryFindErrorMock(playerMock);
+            #endregion
+
+            // protocol を定義
+            var protocol = RenamePlayerProtocol.Create(longPlayerId, "renamed name");
+            var renamePlayerUseCase = new RenamePlayerUseCase(playerRepositoryMock);
+
+            var result = renamePlayerUseCase.Execute(protocol);
+
+            switch (result)
+            {
+                case UseCaseFailure failure:
+                    AreEqual("想定外の例外が発生しました", failure.Reason.Message);
+                    break;
+
+                default:
+                    Fail();
+                    break;
+            }
+        }
+
+        [Test]
+        public void プレイヤーデータ保存時に失敗した場合その情報を取得できる()
+        {
+            #region 下ごしらえ
+            var longPlayerId = 1L;
+            var playerId = new PlayerId(longPlayerId);
+            var playerName = new PlayerName("name");
+            var playerMock = PlayerFactory.Create(playerId, playerName);
+            var playerRepositoryMock = new PlayerRepositorySaveErrorMock(playerMock);
+            #endregion
+
+            // protocol を定義
+            var protocol = RenamePlayerProtocol.Create(longPlayerId, "renamed name");
+            var renamePlayerUseCase = new RenamePlayerUseCase(playerRepositoryMock);
+
+            var result = renamePlayerUseCase.Execute(protocol);
+
+            switch (result)
+            {
+                case UseCaseFailure failure:
+                    AreEqual("想定外の例外が発生しました", failure.Reason.Message);
+                    break;
+
+                default:
+                    Fail();
+                    break;
+            }
+        }
+
         private sealed class PlayerRepositoryMock : IPlayerRepository
         {
             private readonly IPlayer m_playerMock;
@@ -68,6 +127,28 @@ namespace Test.UseCase.Player
             public IDomainResult<IPlayer> FindById(PlayerId id) => DomainResult.Success(m_playerMock);
 
             public IDomainResult<IPlayer> Save(IPlayer player) => DomainResult.Success(player);
+        }
+
+        private sealed class PlayerRepositoryFindErrorMock : IPlayerRepository
+        {
+            private readonly IPlayer m_playerMock;
+
+            public PlayerRepositoryFindErrorMock(IPlayer playerMock) => m_playerMock = playerMock;
+
+            public IDomainResult<IPlayer> FindById(PlayerId id) => DomainResult.Failure<IPlayer>(new UnexpectedError());
+
+            public IDomainResult<IPlayer> Save(IPlayer player) => DomainResult.Success(player);
+        }
+
+        private sealed class PlayerRepositorySaveErrorMock : IPlayerRepository
+        {
+            private readonly IPlayer m_playerMock;
+
+            public PlayerRepositorySaveErrorMock(IPlayer playerMock) => m_playerMock = playerMock;
+
+            public IDomainResult<IPlayer> FindById(PlayerId id) => DomainResult.Success(m_playerMock);
+
+            public IDomainResult<IPlayer> Save(IPlayer player) => DomainResult.Failure<IPlayer>(new UnexpectedError());
         }
     }
 }
