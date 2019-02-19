@@ -1,12 +1,11 @@
 ﻿using System;
-using Domain.Exceptions;
 
-namespace Domain
+namespace UseCase
 {
     /// <summary>
-    /// Domain result ext.
+    /// Application result ext.
     /// </summary>
-    public static class DomainResultExt
+    public static class ApplicationResultExt
     {
         /// <summary>
         /// Flats the map.
@@ -16,22 +15,22 @@ namespace Domain
         /// <param name="selector">Selector.</param>
         /// <typeparam name="Source">The 1st type parameter.</typeparam>
         /// <typeparam name="Result">The 2nd type parameter.</typeparam>
-        public static IDomainResult<Result> FlatMap<Source, Result>(this IDomainResult<Source> source, Func<Source, IDomainResult<Result>> selector)
+        public static IApplicationResult<Result> FlatMap<Source, Result>(this IApplicationResult<Source> source, Func<Source, IApplicationResult<Result>> selector)
         {
-            if (source == null) throw new UnexpectedException();
+            if (source == null) return ApplicationResult.Unexpected<Result>();
 
-            if (selector == null) throw new UnexpectedException();
+            if (selector == null) return ApplicationResult.Unexpected<Result>();
 
             switch (source)
             {
                 case Failure<Source> failure:
-                    return DomainResult.Failure<Result>(failure.Reason);
+                    return ApplicationResult.Failure<Result>(failure.Reason);
 
                 case Success<Source> success:
                     return selector(success.Result);
             }
 
-            throw new UnexpectedException();
+            return ApplicationResult.Unexpected<Result>();
         }
 
         /// <summary>
@@ -42,22 +41,22 @@ namespace Domain
         /// <param name="selector">Selector.</param>
         /// <typeparam name="Source">The 1st type parameter.</typeparam>
         /// <typeparam name="Result">The 2nd type parameter.</typeparam>
-        public static IDomainResult<Result> Map<Source, Result>(this IDomainResult<Source> source, Func<Source, Result> selector)
+        public static IApplicationResult<Result> Map<Source, Result>(this IApplicationResult<Source> source, Func<Source, Result> selector)
         {
-            if (source == null) throw new UnexpectedException();
+            if (source == null) return ApplicationResult.Unexpected<Result>();
 
-            if (selector == null) throw new UnexpectedException();
+            if (selector == null) return ApplicationResult.Unexpected<Result>();
 
             switch (source)
             {
                 case Failure<Source> failure:
-                    return DomainResult.Failure<Result>(failure.Reason);
+                    return ApplicationResult.Failure<Result>(failure.Reason);
 
                 case Success<Source> success:
-                    return DomainResult.Success(selector(success.Result));
+                    return ApplicationResult.Success(selector(success.Result));
             }
 
-            throw new UnexpectedException();
+            return ApplicationResult.Unexpected<Result>();
         }
     }
 }
