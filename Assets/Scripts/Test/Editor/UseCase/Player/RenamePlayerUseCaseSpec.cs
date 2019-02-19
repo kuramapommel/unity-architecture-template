@@ -2,7 +2,7 @@ using NUnit.Framework;
 using Domain;
 using Domain.Player;
 using UseCase.Player;
-using UseCase;
+using System;
 using System.Linq;
 using static NUnit.Framework.Assert;
 using UseCaseSuccess = UseCase.Success<Domain.Player.IPlayer>;
@@ -80,7 +80,7 @@ namespace Test.UseCase.Player
             switch (result)
             {
                 case UseCaseFailure failure:
-                    AreEqual("想定外の例外が発生しました", failure.Reason.Message);
+                    AreEqual("find失敗", failure.Reason.Message);
                     break;
 
                 default:
@@ -109,7 +109,7 @@ namespace Test.UseCase.Player
             switch (result)
             {
                 case UseCaseFailure failure:
-                    AreEqual("想定外の例外が発生しました", failure.Reason.Message);
+                    AreEqual("save失敗", failure.Reason.Message);
                     break;
 
                 default:
@@ -135,7 +135,7 @@ namespace Test.UseCase.Player
 
             public PlayerRepositoryFindErrorMock(IPlayer playerMock) => m_playerMock = playerMock;
 
-            public IDomainResult<IPlayer> FindById(PlayerId id) => DomainResult.Failure<IPlayer>(new UnexpectedError());
+            public IDomainResult<IPlayer> FindById(PlayerId id) => DomainResult.Failure<IPlayer>(new DomainErrrorMock("find失敗"));
 
             public IDomainResult<IPlayer> Save(IPlayer player) => DomainResult.Success(player);
         }
@@ -148,7 +148,18 @@ namespace Test.UseCase.Player
 
             public IDomainResult<IPlayer> FindById(PlayerId id) => DomainResult.Success(m_playerMock);
 
-            public IDomainResult<IPlayer> Save(IPlayer player) => DomainResult.Failure<IPlayer>(new UnexpectedError());
+            public IDomainResult<IPlayer> Save(IPlayer player) => DomainResult.Failure<IPlayer>(new DomainErrrorMock("save失敗"));
+        }
+
+        private readonly struct DomainErrrorMock : IDomainError
+        {
+            public string Message { get; }
+
+            public ErrorLevel Level => ErrorLevel.ERROR;
+
+            public Exception Exception => null;
+
+            public DomainErrrorMock(string message) => Message = message;
         }
     }
 }

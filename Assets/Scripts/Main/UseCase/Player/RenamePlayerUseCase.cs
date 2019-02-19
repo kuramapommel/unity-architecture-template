@@ -1,7 +1,6 @@
 using Domain;
 using Domain.Player;
 using Domain.Exceptions;
-using System.Linq;
 
 namespace UseCase.Player
 {
@@ -33,17 +32,16 @@ namespace UseCase.Player
         /// <param name="protocol">Protocol.</param>
         protected override IApplicationResult<IPlayer> ExecuteImpl((PlayerId playerId, PlayerName renamedName) protocol)
         {
-            foreach (var result in m_playerRepository.FindById(protocol.playerId)
-                .SelectMany(player => player.Rename(protocol.renamedName))
-                .Select(m_playerRepository.Save))
+            var result = m_playerRepository.FindById(protocol.playerId)
+                .FlatMap(player => player.Rename(protocol.renamedName))
+                .FlatMap(m_playerRepository.Save);
+
+            switch (result)
             {
-                switch (result)
-                {
-                    case Domain.Success<IPlayer> success:
-                        return ApplicationResult.Success(success.Result);
-                    case Domain.Failure<IPlayer> failure:
-                        return ApplicationResult.Failure<IPlayer>(failure.Reason.ToApplicationError());
-                }
+                case Domain.Success<IPlayer> success:
+                    return ApplicationResult.Success(success.Result);
+                case Domain.Failure<IPlayer> failure:
+                    return ApplicationResult.Failure<IPlayer>(failure.Reason.ToApplicationError());
             }
 
             return ApplicationResult.Unexpected<IPlayer>();
