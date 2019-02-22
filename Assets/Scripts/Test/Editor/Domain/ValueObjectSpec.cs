@@ -1,7 +1,8 @@
 ﻿using NUnit.Framework;
 using Domain;
 using System;
-using Domain.ValueObject.Attributes;
+using Domain.ValueObject.Requires.Int;
+using Domain.Exceptions;
 using static NUnit.Framework.Assert;
 
 namespace Test.Domain
@@ -40,7 +41,7 @@ namespace Test.Domain
             AreEqual(expected, testTargetStruct.Value);
 
             var error = 2;
-            Throws<ArgumentException>(() => new ForRequireIntLengthAttributeTest(error));
+            Throws<ValidationException>(() => new ForRequireIntLengthAttributeTest(error));
         }
 
         #region mock 定義
@@ -59,11 +60,10 @@ namespace Test.Domain
 
         private readonly struct ForRequireIntLengthAttributeTest : IValueObject<int>
         {
-            [RequireIntLength(min: 1, max: 1)]
             public int Value { get; }
 
             public ForRequireIntLengthAttributeTest(int value) =>
-                Value = value.Validated<ForRequireIntLengthAttributeTest, RequireIntLengthAttribute, int>();
+                Value = value.RequireLength(min: 1, max: 1);
         }
     }
 }
