@@ -62,8 +62,11 @@ namespace Test.Domain
         {
             public int Value { get; }
 
-            public ForRequireIntLengthAttributeTest(int value) =>
-                Value = value.RequireLength(min: 1, max: 1);
+            public ForRequireIntLengthAttributeTest(int value)
+            {
+                value.Require(new Length(min: 1, max: 1));
+                Value = value;
+            }
         }
     }
 }

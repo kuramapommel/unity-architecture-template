@@ -28,7 +28,11 @@ namespace Domain.Player
         /// コンストラクタ
         /// </summary>
         /// <param name="value">Value.</param>
-        public PlayerId(long value) => Value = value.RequireLength(min: 1, max: 999999999999);
+        public PlayerId(long value)
+        {
+            value.Require(new Length(min: 1, max: 999999999999));
+            Value = value;
+        }
 
         /// <summary>
         /// 等価比較
