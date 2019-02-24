@@ -1,8 +1,8 @@
-﻿using NUnit.Framework;
+﻿using System;
 using Domain;
-using System;
-using Domain.ValueObject.Requires.Int;
 using Domain.Exceptions;
+using Domain.ValueObject.Requires.Int;
+using NUnit.Framework;
 using static NUnit.Framework.Assert;
 
 namespace Test.Domain

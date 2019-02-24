@@ -1,6 +1,6 @@
 using Domain;
-using Domain.Player;
 using Domain.Exceptions;
+using Domain.Player;
 
 namespace UseCase.Player
 {

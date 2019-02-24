@@ -1,6 +1,6 @@
-using NUnit.Framework;
-using Domain;
 using System;
+using Domain;
+using NUnit.Framework;
 using static NUnit.Framework.Assert;
 
 namespace Test.Domain

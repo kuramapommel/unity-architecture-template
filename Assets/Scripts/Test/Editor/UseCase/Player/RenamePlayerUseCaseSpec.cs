@@ -1,12 +1,12 @@
-using NUnit.Framework;
-using Domain;
-using Domain.Player;
-using UseCase.Player;
 using System;
 using System.Linq;
+using Domain;
+using Domain.Player;
+using NUnit.Framework;
+using UseCase.Player;
 using static NUnit.Framework.Assert;
-using UseCaseSuccess = UseCase.Success<Domain.Player.IPlayer>;
 using UseCaseFailure = UseCase.Failure<Domain.Player.IPlayer>;
+using UseCaseSuccess = UseCase.Success<Domain.Player.IPlayer>;
 
 namespace Test.UseCase.Player
 {

@@ -1,6 +1,6 @@
-using NUnit.Framework;
-using Domain.Player;
 using Domain;
+using Domain.Player;
+using NUnit.Framework;
 using static NUnit.Framework.Assert;
 
 namespace Test.Domain.Player

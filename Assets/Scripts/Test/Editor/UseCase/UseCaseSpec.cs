@@ -4,12 +4,12 @@ using NUnit.Framework;
 using UseCase;
 using static NUnit.Framework.Assert;
 using BaseUseCase = UseCase.UseCase<int, int>;
+using DomainResult = Domain.DomainResult;
 using ErrorLevel = Domain.ErrorLevel;
-using ValidationException = Domain.Exceptions.ValidationException;
 using Failure = UseCase.Failure<int>;
 using IDomainResult = Domain.IDomainResult<int>;
-using DomainResult = Domain.DomainResult;
 using ValidationError = Domain.ValidationError;
+using ValidationException = Domain.Exceptions.ValidationException;
 
 namespace Test.UseCase
 {

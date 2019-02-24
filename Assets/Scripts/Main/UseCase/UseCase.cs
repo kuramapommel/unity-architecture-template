@@ -1,6 +1,5 @@
 using System;
 using Domain;
-using Domain.Exceptions;
 
 namespace UseCase
 {
