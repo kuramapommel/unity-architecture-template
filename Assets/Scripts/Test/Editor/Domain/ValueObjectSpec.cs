@@ -2,8 +2,11 @@
 using Domain;
 using Domain.Exceptions;
 using Domain.ValueObject.Requires.Int;
+using Domain.ValueObject.Requires.Long;
 using NUnit.Framework;
 using static NUnit.Framework.Assert;
+using IntLength = Domain.ValueObject.Requires.Int.Length;
+using LongLength = Domain.ValueObject.Requires.Long.Length;
 
 namespace Test.Domain
 {
@@ -33,15 +36,27 @@ namespace Test.Domain
         }
 
         [Test]
-        public void RequireIntLengthAttributeを使用してValidationチェックできる()
+        public void Requireを使用してintのValidationチェックできる()
         {
             var expected = 1;
-            var testTargetStruct = new ForRequireIntLengthAttributeTest(expected);
+            var testTargetStruct = new ForRequireIntLengthTest(expected);
 
             AreEqual(expected, testTargetStruct.Value);
 
             var error = 2;
-            Throws<ValidationException>(() => new ForRequireIntLengthAttributeTest(error));
+            Throws<ValidationException>(() => new ForRequireIntLengthTest(error));
+        }
+
+        [Test]
+        public void Requireを使用してlongのValidationチェックできる()
+        {
+            var expected = 1L;
+            var testTargetStruct = new ForRequireLongLengthTest(expected);
+
+            AreEqual(expected, testTargetStruct.Value);
+
+            var error = 2L;
+            Throws<ValidationException>(() => new ForRequireLongLengthTest(error));
         }
 
         #region mock 定義
@@ -56,17 +71,28 @@ namespace Test.Domain
 
             public int CompareTo(DateTime that) => Value.CompareTo(that);
         }
-        #endregion
 
-        private readonly struct ForRequireIntLengthAttributeTest : IValueObject<int>
+        private readonly struct ForRequireIntLengthTest : IValueObject<int>
         {
             public int Value { get; }
 
-            public ForRequireIntLengthAttributeTest(int value)
+            public ForRequireIntLengthTest(int value)
             {
-                value.Require(new Length(min: 1, max: 1));
+                value.Require(new IntLength(min: 1, max: 1));
                 Value = value;
             }
         }
+
+        private readonly struct ForRequireLongLengthTest : IValueObject<long>
+        {
+            public long Value { get; }
+
+            public ForRequireLongLengthTest(long value)
+            {
+                value.Require(new LongLength(min: 1, max: 1));
+                Value = value;
+            }
+        }
+        #endregion
     }
 }
