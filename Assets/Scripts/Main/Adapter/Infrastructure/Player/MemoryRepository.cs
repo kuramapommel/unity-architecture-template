@@ -1,7 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Domain;
 using Domain.Player;
-using System.Collections.Generic;
 
 namespace Adapter.Infrastructure.Player
 {
