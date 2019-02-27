@@ -1,4 +1,4 @@
-﻿namespace Domain.Player
+namespace Domain.Player
 {
     /// <summary>
     /// プレイヤーリポジトリ
