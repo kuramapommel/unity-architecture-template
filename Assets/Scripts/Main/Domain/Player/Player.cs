@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Entity 定義
  * [Entity].cs には、interface, Factory, impl をそれぞれまとめて定義する
  * 
