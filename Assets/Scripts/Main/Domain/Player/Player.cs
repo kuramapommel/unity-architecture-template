@@ -66,9 +66,8 @@ namespace Domain.Player
         /// </summary>
         /// 業務実装はファクトリ内に構造体ごと隠蔽してしまうことで、
         /// 他のサブドメインやレイヤーから直接インスタンス化されるのを防げる
-        /// entity は state を持たないため readonly struct として宣言する
         /// 状態の更新がある場合は更新後の値をセットした新しいインスタンスを生成する
-        private readonly struct PlayerImpl : IPlayer
+        private sealed class PlayerImpl : IPlayer
         {
             /// <summary>
             /// プレイヤーID
