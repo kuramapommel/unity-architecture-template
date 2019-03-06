@@ -57,7 +57,7 @@ namespace Domain
         /// <summary>
         /// 成功結果具象実装構造体
         /// </summary>
-        private readonly struct SuccessImpl<ResultType> : Success<ResultType>
+        private sealed class SuccessImpl<ResultType> : Success<ResultType>
         {
             /// <summary>
             /// 実行結果
@@ -90,7 +90,7 @@ namespace Domain
         /// <summary>
         /// 失敗結果具象実装構造体
         /// </summary>
-        private readonly struct FailureImpl<ResultType> : Failure<ResultType>
+        private sealed class FailureImpl<ResultType> : Failure<ResultType>
         {
             /// <summary>
             /// 失敗内容
