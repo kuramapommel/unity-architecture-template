@@ -157,23 +157,6 @@ namespace Domain.Player
             /// </summary>
             /// <returns>hash</returns>
             public override int GetHashCode() => Id.GetHashCode();
-
-            /// <summary>
-            /// 等価比較
-            /// </summary>
-            /// <param name="self">The first <see cref="Domain.Player.PlayerFactory.PlayerImpl"/> to compare.</param>
-            /// <param name="that">The second <see cref="object"/> to compare.</param>
-            /// <returns><c>true</c> if <c>self</c> and <c>that</c> are equal; otherwise, <c>false</c>.</returns>
-            /// entity の比較は Equals メソッドを使用するより 等号 によるを主に使用するため演算子オーバーロードを使用する
-            public static bool operator ==(PlayerImpl self, object that) => self.Equals(that);
-
-            /// <summary>
-            /// 非等価比較
-            /// </summary>
-            /// <param name="self">The first <see cref="Domain.Player.PlayerFactory.PlayerImpl"/> to compare.</param>
-            /// <param name="that">The second <see cref="object"/> to compare.</param>
-            /// <returns><c>true</c> if <c>self</c> and <c>that</c> are not equal; otherwise, <c>false</c>.</returns>
-            public static bool operator !=(PlayerImpl self, object that) => !(self == that);
         }
     }
 }
