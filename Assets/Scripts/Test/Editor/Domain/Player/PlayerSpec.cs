@@ -11,7 +11,7 @@ namespace Test.Domain.Player
         private static readonly PlayerName name = new PlayerName("name");
 
         [Test]
-        public void PlayerFactoryは渡されたパラメータを元にPlayerを生成する()
+        public void プレイヤーファクトリは与えられたパラメータを元にプレイヤを生成する()
         {
             var player = PlayerFactory.Create(id, name);
 
@@ -20,7 +20,7 @@ namespace Test.Domain.Player
         }
 
         [Test]
-        public void PlayerはRenameによって名前を変更でき_その際更新日付も更新される()
+        public void プレイヤーは名前を変更できる()
         {
             var player = PlayerFactory.Create(id, name);
             var createAt = player.CreateAt;
@@ -29,9 +29,8 @@ namespace Test.Domain.Player
             var success = player.Rename(name: renamedName) as Success<IPlayer>;
 
             var renamedPlayer = success.Result;
-            AreEqual(id, renamedPlayer.Id);
+            AreEqual(player, renamedPlayer);
             AreEqual(renamedName, renamedPlayer.Name);
-            AreEqual(createAt, renamedPlayer.CreateAt);
             // Name の変更に合わせて UpdateAt も更新されている
             Less(createAt, renamedPlayer.UpdateAt);
         }
